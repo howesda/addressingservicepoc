@@ -1,0 +1,1780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="e2f885bf-cc22-4d4e-bd59-b3ccbe9b3fe3" activeEnvironment="Default" name="QAS - OnDemand-2011-03" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:WsdlInterface" id="039e3013-923f-49e8-aa9a-40322738a913" wsaVersion="NONE" name="QASOnDemand" type="wsdl" bindingName="{http://www.qas.com/OnDemand-2011-03}QASOnDemand" soapVersion="1_1" anonymous="optional" definition="file:/home/developer/git/addressingservicepoc/src/main/qas/wsdl/OnDemand-2011-03.wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart="file:/home/developer/git/addressingservicepoc/src/main/qas/wsdl/OnDemand-2011-03.wsdl"><con:part><con:url>file:/home/developer/git/addressingservicepoc/src/main/qas/wsdl/OnDemand-2011-03.wsdl</con:url><con:content><![CDATA[<definitions name="QAS" targetNamespace="http://www.qas.com/OnDemand-2011-03" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:qas="http://www.qas.com/OnDemand-2011-03">
+  <types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.qas.com/OnDemand-2011-03" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+      <xs:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" schemaLocation="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"/>
+      <xs:complexType name="QAAuthentication">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="Username" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="Password" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAAuthentication" type="qas:QAAuthentication"/>
+      <xs:complexType name="QAQueryHeader">
+        <xs:sequence minOccurs="1" maxOccurs="1">
+          <xs:element name="QAAuthentication" type="qas:QAAuthentication"/>
+          <xs:element name="Security" type="wsse:SecurityHeaderType"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAQueryHeader" type="qas:QAQueryHeader"/>
+      <xs:complexType name="QAInformation">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="1" name="StateTransition" type="xs:string"/>
+          <xs:element minOccurs="1" maxOccurs="1" name="CreditsUsed" type="xs:long"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAInformation" type="qas:QAInformation"/>
+      <xs:simpleType name="RequestTagType">
+        <xs:annotation>
+          <xs:documentation>RequestTagType defines a transaction(s) identifier</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="^[A-Za-z0-9\\\ /._:-]{0,256}$"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="QASearch">
+        <xs:annotation>
+          <xs:documentation>QASearch defines a search request</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>Country : The country dataset to use</xs:documentation>
+          <xs:documentation>Engine : The search engine to use, and any engine specific configuration settings</xs:documentation>
+          <xs:documentation>Layout : The layout to use when creating a formatted address (required by verification engine only)</xs:documentation>
+          <xs:documentation>Search : The actual search string</xs:documentation>
+          <xs:documentation>FormattedAddressInPicklist: Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>RequestTag : String for marking request</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Country" type="qas:DataIDType"/>
+            <xs:element name="Engine" type="qas:EngineType"/>
+            <xs:element name="Layout" type="xs:string" minOccurs="0"/>
+            <xs:element name="Search" type="xs:string"/>
+            <xs:element name="FormattedAddressInPicklist" type="xs:boolean" default="false" minOccurs="0"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+          <xs:attribute name="RequestTag" type="qas:RequestTagType"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:simpleType name="DataIDType">
+        <xs:annotation>
+          <xs:documentation>DataIDType defines a data identifier, a 3 charater code</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[A-Za-z0-9][A-Za-z0-9][A-Za-z0-9]"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="EngineType">
+        <xs:annotation>
+          <xs:documentation>EngineType specifies the engine to use for a search, and any engine options</xs:documentation>
+          <xs:documentation>The various attributes are as follows:</xs:documentation>
+          <xs:documentation>Flatten       : Whether or not to flatten the picklist returned by the search</xs:documentation>
+          <xs:documentation>Intensity     : How hard the search engine will search to get a match</xs:documentation>
+          <xs:documentation>PromptSet     : The prompt set to apply to the search string</xs:documentation>
+          <xs:documentation>Threshold     : The typedown threshold (typedown engine only)</xs:documentation>
+          <xs:documentation>Timeout       : The time out period in milliseconds</xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+          <xs:extension base="qas:EngineEnumType">
+            <xs:attribute name="Flatten" type="xs:boolean"/>
+            <xs:attribute name="Intensity" type="qas:EngineIntensityType"/>
+            <xs:attribute name="PromptSet" type="qas:PromptSetType"/>
+            <xs:attribute name="Threshold" type="qas:ThresholdType"/>
+            <xs:attribute name="Timeout" type="qas:TimeoutType"/>
+          </xs:extension>
+        </xs:simpleContent>
+      </xs:complexType>
+      <xs:simpleType name="EngineEnumType">
+        <xs:annotation>
+          <xs:documentation>The available engines</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Singleline"/>
+          <xs:enumeration value="Typedown"/>
+          <xs:enumeration value="Verification"/>
+          <xs:enumeration value="Keyfinder"/>
+          <xs:enumeration value="Intuitive"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="ThresholdType">
+        <xs:annotation>
+          <xs:documentation>The picklist threshold - the maximum size of the picklist</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:minInclusive value="5"/>
+          <xs:maxInclusive value="750"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="EngineIntensityType">
+        <xs:annotation>
+          <xs:documentation>The available searching intensity levels</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Exact"/>
+          <xs:enumeration value="Close"/>
+          <xs:enumeration value="Extensive"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="TimeoutType">
+        <xs:annotation>
+          <xs:documentation>The server searching timeout - how long before a search is aborted (milliseconds)</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:nonNegativeInteger">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="600000"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:simpleType name="PromptSetType">
+        <xs:annotation>
+          <xs:documentation>The available prompt sets</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="OneLine"/>
+          <xs:enumeration value="Default"/>
+          <xs:enumeration value="Generic"/>
+          <xs:enumeration value="Optimal"/>
+          <xs:enumeration value="Alternate"/>
+          <xs:enumeration value="Alternate2"/>
+          <xs:enumeration value="Alternate3"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="QASearchResult">
+        <xs:annotation>
+          <xs:documentation>QASearchResult describes the results of a search</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>QAPicklist  : The picklist produced by the search</xs:documentation>
+          <xs:documentation>QAAddress   : A formatted address produced by the search.
+                Note that only the verification engine will ever produce a formatted address.
+                Other engines will only ever produce a picklist.</xs:documentation>
+          <xs:documentation>VerificationFlags   : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>The VerifyLevel attribute specifies the level to which the verification engine has
+                verified the input address. It can be ignored when using all other engines.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="QAPicklist" type="qas:QAPicklistType" minOccurs="0"/>
+            <xs:element name="QAAddress" type="qas:QAAddressType" minOccurs="0"/>
+            <xs:element name="VerificationFlags" type="qas:VerificationFlagsType" minOccurs="0"/>
+          </xs:sequence>
+          <xs:attribute name="VerifyLevel" type="qas:VerifyLevelType" default="None"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:simpleType name="VerifyLevelType">
+        <xs:annotation>
+          <xs:documentation>The possible verification levels</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None"/>
+          <xs:enumeration value="Verified"/>
+          <xs:enumeration value="InteractionRequired"/>
+          <xs:enumeration value="PremisesPartial"/>
+          <xs:enumeration value="StreetPartial"/>
+          <xs:enumeration value="Multiple"/>
+          <xs:enumeration value="VerifiedPlace"/>
+          <xs:enumeration value="VerifiedStreet"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="QARefine">
+        <xs:annotation>
+          <xs:documentation>QARefine defines a refinement request</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>Moniker    : The Search Point Moniker to refine</xs:documentation>
+          <xs:documentation>Refinement : The refinement text</xs:documentation>
+          <xs:documentation>Layout     : The layout to use when creating a formatted address (used in certain scenarios for formatting picklist text)</xs:documentation>
+          <xs:documentation>FormattedAddressInPicklist: Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>The attributes are as follows:</xs:documentation>
+          <xs:documentation>Threshold  : The picklist threshold (i.e. the maximum size of the picklist)</xs:documentation>
+          <xs:documentation>Timeout    : The timeout period in milliseconds</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>RequestTag : String for marking request</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Moniker" type="xs:string"/>
+            <xs:element name="Refinement" type="xs:string"/>
+            <xs:element name="Layout" type="xs:string" minOccurs="0"/>
+            <xs:element name="FormattedAddressInPicklist" type="xs:boolean" default="false" minOccurs="0"/>
+          </xs:sequence>
+          <xs:attribute name="Threshold" type="qas:ThresholdType"/>
+          <xs:attribute name="Timeout" type="qas:TimeoutType"/>
+          <xs:attribute name="Localisation" type="xs:string"/>
+          <xs:attribute name="RequestTag" type="qas:RequestTagType"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Picklist">
+        <xs:annotation>
+          <xs:documentation>Picklist describes a returned picklist</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="QAPicklist" type="qas:QAPicklistType"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="QAPicklistType">
+        <xs:annotation>
+          <xs:documentation>QAPicklistType describes a picklist</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>FullPicklistMoniker : The Search Point Moniker that describes the entire picklist</xs:documentation>
+          <xs:documentation>PicklistEntry       : The actual picklist entries</xs:documentation>
+          <xs:documentation>Prompt              : The prompt to display to the user, indicating what information they should enter next</xs:documentation>
+          <xs:documentation>Total               : The total number of available results</xs:documentation>
+          <xs:documentation>The attributes are as follows:</xs:documentation>
+          <xs:documentation>AutoFormatSafe      : It is suggested that you immediately format the first picklist item</xs:documentation>
+          <xs:documentation>AutoFormatPastClose : There is only one exact match, so you may want immediately to format the first picklist item</xs:documentation>
+          <xs:documentation>AutoStepInSafe      : It is suggested that you immediately step-in to the first picklist item</xs:documentation>
+          <xs:documentation>AutoStepInPastClose : There is only one exact match, so you may want immediately to step-in to the first picklist item</xs:documentation>
+          <xs:documentation>LargePotential      : Potentially, there are too many results to display</xs:documentation>
+          <xs:documentation>MaxMatches          : The number of results exceeded the maximum allowed</xs:documentation>
+          <xs:documentation>MoreOtherMatches    : There are additional matches that can be displayed</xs:documentation>
+          <xs:documentation>OverThreshold       : There are more picklist items than the threshold value</xs:documentation>
+          <xs:documentation>Timeout             : The search/refinement timed out</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="FullPicklistMoniker" type="xs:string"/>
+          <xs:element name="PicklistEntry" type="qas:PicklistEntryType" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="Prompt" type="xs:string"/>
+          <xs:element name="Total" type="xs:nonNegativeInteger"/>
+        </xs:sequence>
+        <xs:attribute name="AutoFormatSafe" type="xs:boolean" default="false"/>
+        <xs:attribute name="AutoFormatPastClose" type="xs:boolean" default="false"/>
+        <xs:attribute name="AutoStepinSafe" type="xs:boolean" default="false"/>
+        <xs:attribute name="AutoStepinPastClose" type="xs:boolean" default="false"/>
+        <xs:attribute name="LargePotential" type="xs:boolean" default="false"/>
+        <xs:attribute name="MaxMatches" type="xs:boolean" default="false"/>
+        <xs:attribute name="MoreOtherMatches" type="xs:boolean" default="false"/>
+        <xs:attribute name="OverThreshold" type="xs:boolean" default="false"/>
+        <xs:attribute name="Timeout" type="xs:boolean" default="false"/>
+      </xs:complexType>
+      <xs:complexType name="PicklistEntryType">
+        <xs:annotation>
+          <xs:documentation>PicklistEntryType describes an entry in a picklist</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>Moniker        : The Search Point Moniker that represents this picklist entry</xs:documentation>
+          <xs:documentation>PartialAddress : The full details of the address captured so far</xs:documentation>
+          <xs:documentation>Picklist       : The picklist text to display</xs:documentation>
+          <xs:documentation>Postcode       : The postcode to display</xs:documentation>
+          <xs:documentation>Score          : The percentage score assigned to the match</xs:documentation>
+          <xs:documentation>QAAddress      : The Full Address for the moniker</xs:documentation>
+          <xs:documentation>The attributes are as follows:</xs:documentation>
+          <xs:documentation>FullAddress         : This picklist entry is a full deliverable address</xs:documentation>
+          <xs:documentation>Multiples           : This entry represents multiple address lines</xs:documentation>
+          <xs:documentation>CanStep             : This entry can be stepped into</xs:documentation>
+          <xs:documentation>AliasMatch          : This match is an alias</xs:documentation>
+          <xs:documentation>PostcodeRecoded     : This entry has a recoded postcode</xs:documentation>
+          <xs:documentation>CrossBorderMatch    : This entry represents a nearby area, outside the strict initial boundaries of the search</xs:documentation>
+          <xs:documentation>DummyPOBox          : This entry is the dummy PO Box entry</xs:documentation>
+          <xs:documentation>Name                : This entry is a Names result</xs:documentation>
+          <xs:documentation>Information         : This entry is an informational prompt</xs:documentation>
+          <xs:documentation>WarnInformation     : This entry is a warning informational prompt</xs:documentation>
+          <xs:documentation>IncompleteAddr      : This entry is the dummy item (for premise-less countries)</xs:documentation>
+          <xs:documentation>UnresolvableRange   : This entry is a static range item that cannot be expanded</xs:documentation>
+          <xs:documentation>PhantomPrimaryPoint : This entry is a Phantom Primary Point (AUS only)</xs:documentation>
+          <xs:documentation>SubsidiaryData      : This entry is from the subsidiary rather than the base dataset</xs:documentation>
+          <xs:documentation>ExtendedData        : This entry is from the base dataset but extended by the subsidiary dataset</xs:documentation>
+          <xs:documentation>EnhancedData        : This entry is from the base dataset but enhanced by the subsidiary data set</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Moniker" type="xs:string"/>
+          <xs:element name="PartialAddress" type="xs:string"/>
+          <xs:element name="Picklist" type="xs:string"/>
+          <xs:element name="Postcode" type="xs:string"/>
+          <xs:element name="Score" type="xs:nonNegativeInteger"/>
+          <xs:element name="QAAddress" type="qas:QAAddressType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="FullAddress" type="xs:boolean" default="false"/>
+        <xs:attribute name="Multiples" type="xs:boolean" default="false"/>
+        <xs:attribute name="CanStep" type="xs:boolean" default="false"/>
+        <xs:attribute name="AliasMatch" type="xs:boolean" default="false"/>
+        <xs:attribute name="PostcodeRecoded" type="xs:boolean" default="false"/>
+        <xs:attribute name="CrossBorderMatch" type="xs:boolean" default="false"/>
+        <xs:attribute name="DummyPOBox" type="xs:boolean" default="false"/>
+        <xs:attribute name="Name" type="xs:boolean" default="false"/>
+        <xs:attribute name="Information" type="xs:boolean" default="false"/>
+        <xs:attribute name="WarnInformation" type="xs:boolean" default="false"/>
+        <xs:attribute name="IncompleteAddr" type="xs:boolean" default="false"/>
+        <xs:attribute name="UnresolvableRange" type="xs:boolean" default="false"/>
+        <xs:attribute name="PhantomPrimaryPoint" type="xs:boolean" default="false"/>
+        <xs:attribute name="SubsidiaryData" type="xs:boolean" default="false"/>
+        <xs:attribute name="ExtendedData" type="xs:boolean" default="false"/>
+        <xs:attribute name="EnhancedData" type="xs:boolean" default="false"/>
+      </xs:complexType>
+      <xs:element name="QAGetAddress">
+        <xs:annotation>
+          <xs:documentation>QAGetAddress defines a request for a formatted address</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>Layout   : The layout to use</xs:documentation>
+          <xs:documentation>Moniker  : The Search Point Moniker of the picklist entry to format</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>RequestTag : String for marking request</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Layout" type="xs:string" minOccurs="0"/>
+            <xs:element name="Moniker" type="xs:string"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+          <xs:attribute name="RequestTag" type="qas:RequestTagType"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Address">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="QAAddress" type="qas:QAAddressType"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="QAAddressType">
+        <xs:annotation>
+          <xs:documentation>QAAddressType describes a formatted address</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>AddressLine  : The individual lines of the address</xs:documentation>
+          <xs:documentation>The attributes are as follows:</xs:documentation>
+          <xs:documentation>Overflow   : There are not enough address lines configured to display the whole address</xs:documentation>
+          <xs:documentation>Truncated  : Truncation has occurred on one or more address lines</xs:documentation>
+          <xs:documentation>DPVStatus : DPV Status for the Address</xs:documentation>
+          <xs:documentation>MissingSubPremise: Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="AddressLine" type="qas:AddressLineType" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="Overflow" type="xs:boolean" default="false"/>
+        <xs:attribute name="Truncated" type="xs:boolean" default="false"/>
+        <xs:attribute name="DPVStatus" type="qas:DPVStatusType"/>
+        <xs:attribute name="MissingSubPremise" type="xs:boolean" default="false"/>
+      </xs:complexType>
+      <xs:annotation>
+        <xs:documentation>DPVStatusType specifies the DPVStatus for an Address</xs:documentation>
+        <xs:documentation>The various attributes are as follows:</xs:documentation>
+        <xs:documentation>DPVNotConfigured : DPV has not been configured in the Layout</xs:documentation>
+        <xs:documentation>DPVConfigured : DPV has been configured in the Layout</xs:documentation>
+        <xs:documentation>DPVConfirmed : The Address is DPV Confirmed</xs:documentation>
+        <xs:documentation>DPVConfirmedMissingSec : The Address is DPV Confirmed but has Missing or Incorrect secondary information</xs:documentation>
+        <xs:documentation>DPVNotConfirmed : The Address is NOT DPV Confirmed</xs:documentation>
+        <xs:documentation>DPVLocked : DPV Address Detail Retrieval is Locked</xs:documentation>
+        <xs:documentation>DPVSeedHit : The Address is a DPV Seed</xs:documentation>
+      </xs:annotation>
+      <xs:simpleType name="DPVStatusType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="DPVNotConfigured"/>
+          <xs:enumeration value="DPVConfigured"/>
+          <xs:enumeration value="DPVConfirmed"/>
+          <xs:enumeration value="DPVConfirmedMissingSec"/>
+          <xs:enumeration value="DPVNotConfirmed"/>
+          <xs:enumeration value="DPVLocked"/>
+          <xs:enumeration value="DPVSeedHit"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="AddressLineType">
+        <xs:annotation>
+          <xs:documentation>AddressLineType describes one line of a formatted address</xs:documentation>
+          <xs:documentation>The child elements are as follows:</xs:documentation>
+          <xs:documentation>Label  : The name of any address element fixed to this line</xs:documentation>
+          <xs:documentation>Line   : The formatted address line</xs:documentation>
+          <xs:documentation>DataplusGroup: DataPlus groups associated with this line</xs:documentation>
+          <xs:documentation>The attributes are as follows:</xs:documentation>
+          <xs:documentation>LineContent      : The type of data on this line</xs:documentation>
+          <xs:documentation>Overflow         : Some address elements were lost from this line</xs:documentation>
+          <xs:documentation>Truncated        : Truncation occurred on this line</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Label" type="xs:string" minOccurs="0"/>
+          <xs:element name="Line" type="xs:string" minOccurs="0"/>
+          <xs:element name="DataplusGroup" type="qas:DataplusGroupType" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="LineContent" type="qas:LineContentType" default="Address"/>
+        <xs:attribute name="Overflow" type="xs:boolean" default="false"/>
+        <xs:attribute name="Truncated" type="xs:boolean" default="false"/>
+      </xs:complexType>
+      <xs:complexType name="DataplusGroupType">
+        <xs:sequence>
+          <xs:element name="DataplusGroupItem" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="GroupName" type="xs:string"/>
+      </xs:complexType>
+      <xs:simpleType name="LineContentType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None"/>
+          <xs:enumeration value="Address"/>
+          <xs:enumeration value="Name"/>
+          <xs:enumeration value="Ancillary"/>
+          <xs:enumeration value="DataPlus"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="QAData">
+        <xs:annotation>
+          <xs:documentation>QAData describes all of the datasets that are available</xs:documentation>
+          <xs:documentation>DataSet : Details of a dataset</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="DataSet" type="qas:QADataSet" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="QADataSet">
+        <xs:annotation>
+          <xs:documentation>QADataSet describes a dataset</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>ID    : Three letter dataset ID</xs:documentation>
+          <xs:documentation>Name  : Full name of dataset</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="ID" type="qas:DataIDType"/>
+          <xs:element name="Name" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAGetData">
+        <xs:annotation>
+          <xs:documentation>QAGetData defines a data for GetData message</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence></xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAGetLicenseInfo">
+        <xs:annotation>
+          <xs:documentation>QAGetLicenseInfo defines a data for the GetLicenseInfo message</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence></xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAGetSystemInfo">
+        <xs:annotation>
+          <xs:documentation>QAGetSystemInfo a data for the GetSystemInfo message</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence></xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAGetDataMapDetail">
+        <xs:annotation>
+          <xs:documentation>QAGetDataMapDetail describes a request for data map detail information</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="DataMap" type="qas:DataIDType"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QADataMapDetail">
+        <xs:annotation>
+          <xs:documentation>QADataMapDetail contains details of all datasets in a given data map</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="WarningLevel" type="qas:LicenceWarningLevel"/>
+            <xs:element name="LicensedSet" type="qas:QALicensedSet" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QALicenceInfo">
+        <xs:annotation>
+          <xs:documentation>QALicenceInfo describes all of the licence information for each dataset</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>WarningLevel  : Warning level for the set of licensed data</xs:documentation>
+          <xs:documentation>LicensedSet   : Details of a licensed dataset</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="WarningLevel" type="qas:LicenceWarningLevel"/>
+            <xs:element name="LicensedSet" type="qas:QALicensedSet" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:simpleType name="LicenceWarningLevel">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="None"/>
+          <xs:enumeration value="DataExpiring"/>
+          <xs:enumeration value="LicenceExpiring"/>
+          <xs:enumeration value="ClicksLow"/>
+          <xs:enumeration value="Evaluation"/>
+          <xs:enumeration value="NoClicks"/>
+          <xs:enumeration value="DataExpired"/>
+          <xs:enumeration value="EvalLicenceExpired"/>
+          <xs:enumeration value="FullLicenceExpired"/>
+          <xs:enumeration value="LicenceNotFound"/>
+          <xs:enumeration value="DataUnreadable"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:complexType name="QALicensedSet">
+        <xs:annotation>
+          <xs:documentation>QALicensedSet describes a licensed dataset</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>ID              : Dataset ID</xs:documentation>
+          <xs:documentation>Description     : Full description of dataset</xs:documentation>
+          <xs:documentation>Copyright       : Copyright information</xs:documentation>
+          <xs:documentation>Version         : Version of the data</xs:documentation>
+          <xs:documentation>BaseCountry     : Data ID of the country to which this dataset is an extension</xs:documentation>
+          <xs:documentation>Status          : A string describing the state of the data</xs:documentation>
+          <xs:documentation>Server          : The name of the server where the dataset is being used</xs:documentation>
+          <xs:documentation>WarningLevel    : The warning level for the dataset</xs:documentation>
+          <xs:documentation>DaysLeft        : The number of days before the dataset is unusable</xs:documentation>
+          <xs:documentation>DaysLeft        : The number of days before the dataset is unusable</xs:documentation>
+          <xs:documentation>LicenceDaysLeft : The number of days before the licence expires</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="ID" type="xs:string"/>
+          <xs:element name="Description" type="xs:string"/>
+          <xs:element name="Copyright" type="xs:string"/>
+          <xs:element name="Version" type="xs:string"/>
+          <xs:element name="BaseCountry" type="xs:string"/>
+          <xs:element name="Status" type="xs:string"/>
+          <xs:element name="Server" type="xs:string"/>
+          <xs:element name="WarningLevel" type="qas:LicenceWarningLevel"/>
+          <xs:element name="DaysLeft" type="xs:nonNegativeInteger"/>
+          <xs:element name="DataDaysLeft" type="xs:nonNegativeInteger"/>
+          <xs:element name="LicenceDaysLeft" type="xs:nonNegativeInteger"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QASystemInfo">
+        <xs:annotation>
+          <xs:documentation>QASystemInfo describes the current state of the system</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="SystemInfo" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAGetExampleAddresses">
+        <xs:annotation>
+          <xs:documentation>QAGetExampleAddresses defines a request for the example addresses for a given dataset</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Country  : The country dataset to get example addresses for</xs:documentation>
+          <xs:documentation>Layout   : The layout to use to format the example addresses</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation>RequestTag : String for marking request</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Country" type="qas:DataIDType"/>
+            <xs:element name="Layout" type="xs:string"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+          <xs:attribute name="RequestTag" type="qas:RequestTagType"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAExampleAddresses">
+        <xs:annotation>
+          <xs:documentation>QAExampleAddresses describes all of the example addresses for a dataset</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ExampleAddress" type="qas:QAExampleAddress" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="QAExampleAddress">
+        <xs:annotation>
+          <xs:documentation>QAExampleAddress describes an example address</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Address  : The formatted example address</xs:documentation>
+          <xs:documentation>Comment  : A comment describing the address</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Address" type="qas:QAAddressType"/>
+          <xs:element name="Comment" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAGetLayouts">
+        <xs:annotation>
+          <xs:documentation>QAGetLayouts defines a request for a list of all the available layouts</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Country   : The country dataset to get layouts for</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Country" type="qas:DataIDType"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QALayouts">
+        <xs:annotation>
+          <xs:documentation>QALayouts describes all the available layouts for a dataset</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Layout" type="qas:QALayout" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="QALayout">
+        <xs:annotation>
+          <xs:documentation>QALayout describes a layout</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Name     : The name of the layout</xs:documentation>
+          <xs:documentation>Comment  : A comment describing the layout</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Name" type="xs:string"/>
+          <xs:element name="Comment" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QAGetPromptSet">
+        <xs:annotation>
+          <xs:documentation>QAGetPromptSet defines a request for details of a prompt set</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Country   : The country dataset</xs:documentation>
+          <xs:documentation>PromptSet : The prompt set to get details of</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Country" type="qas:DataIDType"/>
+            <xs:element name="Engine" type="qas:EngineType" minOccurs="0"/>
+            <xs:element name="PromptSet" type="qas:PromptSetType"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QAPromptSet">
+        <xs:annotation>
+          <xs:documentation>QAPromptSet describes a prompt set</xs:documentation>
+          <xs:documentation>Child element:</xs:documentation>
+          <xs:documentation>Line : Describes one line of the prompt set</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Line" type="qas:PromptLine" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+          <xs:attribute name="Dynamic" type="xs:boolean" default="false"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="PromptLine">
+        <xs:annotation>
+          <xs:documentation>PromptLine describes a line of a prompt set</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Prompt               : The prompt to display to the user</xs:documentation>
+          <xs:documentation>SuggestedInputLength : The suggested length of the input buffer</xs:documentation>
+          <xs:documentation>Example              : An example of possible input</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+          <xs:element name="Prompt" type="xs:string"/>
+          <xs:element name="SuggestedInputLength" type="xs:nonNegativeInteger"/>
+          <xs:element name="Example" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="QACanSearch">
+        <xs:annotation>
+          <xs:documentation>QACanSearch returns a boolean specifying whether a search is possible for a</xs:documentation>
+          <xs:documentation>specific country, engine and layout</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>Country  : The country dataset</xs:documentation>
+          <xs:documentation>Engine   : The search engine to use, and any engine specific configuration settings</xs:documentation>
+          <xs:documentation>Layout   : The layout with which to format the address</xs:documentation>
+          <xs:documentation>Localisation : Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+          <xs:documentation/>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Country" type="qas:DataIDType"/>
+            <xs:element name="Engine" type="qas:EngineType"/>
+            <xs:element name="Layout" type="xs:string" minOccurs="0"/>
+          </xs:sequence>
+          <xs:attribute name="Localisation" type="xs:string"/>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QASearchOk">
+        <xs:annotation>
+          <xs:documentation>QASearchOK is the response from a CanSearch operation.</xs:documentation>
+          <xs:documentation>Child elements are as follows:</xs:documentation>
+          <xs:documentation>IsOk        : Boolean stating whether searching is available</xs:documentation>
+          <xs:documentation>ErrorCode   : The QAS error code returned</xs:documentation>
+          <xs:documentation>ErrorMesage : A textual description of the error</xs:documentation>
+          <xs:documentation>ErrorDetail : Detailed error history</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="IsOk" type="xs:boolean"/>
+            <xs:element name="ErrorCode" type="xs:string" minOccurs="0"/>
+            <xs:element name="ErrorMessage" type="xs:string" minOccurs="0"/>
+            <xs:element name="ErrorDetail" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:annotation>
+        <xs:documentation>Please refer to the associated Pro On Demand web service documentation for information about this feature.</xs:documentation>
+      </xs:annotation>
+      <xs:complexType name="VerificationFlagsType">
+        <xs:sequence>
+          <xs:element name="BldgFirmNameChanged" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="PrimaryNumberChanged" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="StreetCorrected" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="RuralRteHighwayContractMatched" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="CityNameChanged" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="CityAliasMatched" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="StateProvinceChanged" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="PostCodeCorrected" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="SecondaryNumRetained" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="IdenPreStInfoRetained" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="GenPreStInfoRetained" type="xs:boolean" default="false" minOccurs="0"/>
+          <xs:element name="PostStInfoRetained" type="xs:boolean" default="false" minOccurs="0"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:schema>
+  </types>
+  <message name="QueryHeader">
+    <part name="query_header" element="qas:QAQueryHeader"/>
+  </message>
+  <message name="QAInformation">
+    <part name="information_header" element="qas:QAInformation"/>
+  </message>
+  <message name="Search">
+    <part name="body" element="qas:QASearch"/>
+  </message>
+  <message name="SearchResult">
+    <part name="body" element="qas:QASearchResult"/>
+  </message>
+  <message name="Refine">
+    <part name="body" element="qas:QARefine"/>
+  </message>
+  <message name="Picklist">
+    <part name="body" element="qas:Picklist"/>
+  </message>
+  <message name="GetAddress">
+    <part name="body" element="qas:QAGetAddress"/>
+  </message>
+  <message name="Address">
+    <part name="body" element="qas:Address"/>
+  </message>
+  <message name="GetData">
+    <part name="body" element="qas:QAGetData"/>
+  </message>
+  <message name="Data">
+    <part name="body" element="qas:QAData"/>
+  </message>
+  <message name="GetDataMapDetail">
+    <part name="body" element="qas:QAGetDataMapDetail"/>
+  </message>
+  <message name="DataMapDetail">
+    <part name="body" element="qas:QADataMapDetail"/>
+  </message>
+  <message name="GetLicenseInfo">
+    <part name="body" element="qas:QAGetLicenseInfo"/>
+  </message>
+  <message name="LicenseInfo">
+    <part name="body" element="qas:QALicenceInfo"/>
+  </message>
+  <message name="GetSystemInfo">
+    <part name="body" element="qas:QAGetSystemInfo"/>
+  </message>
+  <message name="SystemInfo">
+    <part name="body" element="qas:QASystemInfo"/>
+  </message>
+  <message name="GetExampleAddresses">
+    <part name="body" element="qas:QAGetExampleAddresses"/>
+  </message>
+  <message name="ExampleAddresses">
+    <part name="body" element="qas:QAExampleAddresses"/>
+  </message>
+  <message name="GetLayouts">
+    <part name="body" element="qas:QAGetLayouts"/>
+  </message>
+  <message name="Layouts">
+    <part name="body" element="qas:QALayouts"/>
+  </message>
+  <message name="GetPromptSet">
+    <part name="body" element="qas:QAGetPromptSet"/>
+  </message>
+  <message name="PromptSet">
+    <part name="body" element="qas:QAPromptSet"/>
+  </message>
+  <message name="CanSearch">
+    <part name="body" element="qas:QACanSearch"/>
+  </message>
+  <message name="SearchOk">
+    <part name="body" element="qas:QASearchOk"/>
+  </message>
+  <portType name="QAPortType">
+    <operation name="DoSearch">
+      <input message="qas:Search"/>
+      <output message="qas:SearchResult"/>
+    </operation>
+    <operation name="DoRefine">
+      <input message="qas:Refine"/>
+      <output message="qas:Picklist"/>
+    </operation>
+    <operation name="DoGetAddress">
+      <input message="qas:GetAddress"/>
+      <output message="qas:Address"/>
+    </operation>
+    <operation name="DoGetData">
+      <input message="qas:GetData"/>
+      <output message="qas:Data"/>
+    </operation>
+    <operation name="DoGetDataMapDetail">
+      <input message="qas:GetDataMapDetail"/>
+      <output message="qas:DataMapDetail"/>
+    </operation>
+    <operation name="DoGetLicenseInfo">
+      <input message="qas:GetLicenseInfo"/>
+      <output message="qas:LicenseInfo"/>
+    </operation>
+    <operation name="DoGetSystemInfo">
+      <input message="qas:GetSystemInfo"/>
+      <output message="qas:SystemInfo"/>
+    </operation>
+    <operation name="DoGetExampleAddresses">
+      <input message="qas:GetExampleAddresses"/>
+      <output message="qas:ExampleAddresses"/>
+    </operation>
+    <operation name="DoGetLayouts">
+      <input message="qas:GetLayouts"/>
+      <output message="qas:Layouts"/>
+    </operation>
+    <operation name="DoGetPromptSet">
+      <input message="qas:GetPromptSet"/>
+      <output message="qas:PromptSet"/>
+    </operation>
+    <operation name="DoCanSearch">
+      <input message="qas:CanSearch"/>
+      <output message="qas:SearchOk"/>
+    </operation>
+  </portType>
+  <binding name="QASOnDemand" type="qas:QAPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="DoSearch">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoSearch"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoRefine">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoRefine"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetAddress">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetAddress"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetData">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetData"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetDataMapDetail">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetDataMapDetail"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetLicenseInfo">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetLicenseInfo"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetSystemInfo">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetSystemInfo"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetExampleAddresses">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetExampleAddresses"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetLayouts">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetLayouts"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoGetPromptSet">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoGetPromptSet"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="DoCanSearch">
+      <soap:operation soapAction="http://www.qas.com/OnDemand-2011-03/DoCanSearch"/>
+      <input>
+        <soap:header message="qas:QueryHeader" part="query_header" use="literal"/>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:header message="qas:QAInformation" part="information_header" use="literal"/>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="QASOnDemandIntermediary">
+    <port binding="qas:QASOnDemand" name="QAPortType">
+      <soap:address location="https://ws.ondemand.qas.com/ProOnDemand/V3/ProOnDemandService.asmx"/>
+    </port>
+  </service>
+</definitions>]]></con:content><con:type>http://schemas.xmlsoap.org/wsdl/</con:type></con:part><con:part><con:url>http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd</con:url><con:content><![CDATA[<!--OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS Executive Director.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS Executive Director.
+Copyright © OASIS Open 2002-2004. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself does not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an “AS IS” basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.-->
+<xsd:schema targetNamespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all" version="0.2" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <xsd:import namespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" schemaLocation="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"/>
+  <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
+  <xsd:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
+  <xsd:complexType name="AttributedString">
+    <xsd:annotation>
+      <xsd:documentation>This type represents an element with arbitrary attributes.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute ref="wsu:Id"/>
+        <xsd:anyAttribute namespace="##other" processContents="lax"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="PasswordString">
+    <xsd:annotation>
+      <xsd:documentation>This type is used for password elements per Section 4.1.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="wsse:AttributedString">
+        <xsd:attribute name="Type" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="EncodedString">
+    <xsd:annotation>
+      <xsd:documentation>This type is used for elements containing stringified binary data.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="wsse:AttributedString">
+        <xsd:attribute name="EncodingType" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="UsernameTokenType">
+    <xsd:annotation>
+      <xsd:documentation>This type represents a username token per Section 4.1</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Username" type="wsse:AttributedString"/>
+      <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+    <xsd:attribute ref="wsu:Id"/>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:complexType name="BinarySecurityTokenType">
+    <xsd:annotation>
+      <xsd:documentation>A security token that is encoded in binary</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="wsse:EncodedString">
+        <xsd:attribute name="ValueType" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="KeyIdentifierType">
+    <xsd:annotation>
+      <xsd:documentation>A security token key identifier</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="wsse:EncodedString">
+        <xsd:attribute name="ValueType" type="xsd:anyURI"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:simpleType name="tUsage">
+    <xsd:annotation>
+      <xsd:documentation>Typedef to allow a list of usages (as URIs).</xsd:documentation>
+    </xsd:annotation>
+    <xsd:list itemType="xsd:anyURI"/>
+  </xsd:simpleType>
+  <xsd:attribute name="Usage" type="tUsage">
+    <xsd:annotation>
+      <xsd:documentation>This global attribute is used to indicate the usage of a referenced or indicated token within the containing context</xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+  <xsd:complexType name="ReferenceType">
+    <xsd:annotation>
+      <xsd:documentation>This type represents a reference to an external security token.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="URI" type="xsd:anyURI"/>
+    <xsd:attribute name="ValueType" type="xsd:anyURI"/>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:complexType name="EmbeddedType">
+    <xsd:annotation>
+      <xsd:documentation>This type represents a reference to an embedded security token.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:any processContents="lax"/>
+    </xsd:choice>
+    <xsd:attribute name="ValueType" type="xsd:anyURI"/>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:complexType name="SecurityTokenReferenceType">
+    <xsd:annotation>
+      <xsd:documentation>This type is used reference a security token.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:any processContents="lax"/>
+    </xsd:choice>
+    <xsd:attribute ref="wsu:Id"/>
+    <xsd:attribute ref="wsse:Usage"/>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:complexType name="SecurityHeaderType">
+    <xsd:annotation>
+      <xsd:documentation>This complexType defines header block to use for security-relevant data directed at a specific SOAP actor.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>The use of "any" is to allow extensibility and different forms of security data.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:any>
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:complexType name="TransformationParametersType">
+    <xsd:annotation>
+      <xsd:documentation>This complexType defines a container for elements to be specified from any namespace as properties/parameters of a DSIG transformation.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:any processContents="lax" minOccurs="0" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>The use of "any" is to allow extensibility from any namespace.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:any>
+    </xsd:sequence>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:complexType>
+  <xsd:element name="UsernameToken" type="wsse:UsernameTokenType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines the wsse:UsernameToken element per Section 4.1.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="BinarySecurityToken" type="wsse:BinarySecurityTokenType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines the wsse:BinarySecurityToken element per Section 4.2.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="Reference" type="wsse:ReferenceType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines a security token reference</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="Embedded" type="wsse:EmbeddedType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines a security token embedded reference</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="KeyIdentifier" type="wsse:KeyIdentifierType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines a key identifier reference</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="SecurityTokenReference" type="wsse:SecurityTokenReferenceType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines the wsse:SecurityTokenReference per Section 4.3.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="Security" type="wsse:SecurityHeaderType">
+    <xsd:annotation>
+      <xsd:documentation>This element defines the wsse:Security SOAP header element per Section 4.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="TransformationParameters" type="wsse:TransformationParametersType">
+    <xsd:annotation>
+      <xsd:documentation>This element contains properties for transformations from any namespace, including DSIG.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="Password" type="wsse:PasswordString"/>
+  <xsd:element name="Nonce" type="wsse:EncodedString"/>
+  <xsd:simpleType name="FaultcodeEnum">
+    <xsd:restriction base="xsd:QName">
+      <xsd:enumeration value="wsse:UnsupportedSecurityToken"/>
+      <xsd:enumeration value="wsse:UnsupportedAlgorithm"/>
+      <xsd:enumeration value="wsse:InvalidSecurity"/>
+      <xsd:enumeration value="wsse:InvalidSecurityToken"/>
+      <xsd:enumeration value="wsse:FailedAuthentication"/>
+      <xsd:enumeration value="wsse:FailedCheck"/>
+      <xsd:enumeration value="wsse:SecurityTokenUnavailable"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd</con:url><con:content><![CDATA[<!--OASIS takes no position regarding the validity or scope of any intellectual property or other rights that might be claimed to pertain to the implementation or use of the technology described in this document or the extent to which any license under such rights might or might not be available; neither does it represent that it has made any effort to identify any such rights. Information on OASIS's procedures with respect to rights in OASIS specifications can be found at the OASIS website. Copies of claims of rights made available for publication and any assurances of licenses to be made available, or the result of an attempt made to obtain a general license or permission for the use of such proprietary rights by implementors or users of this specification, can be obtained from the OASIS Executive Director.
+OASIS invites any interested party to bring to its attention any copyrights, patents or patent applications, or other proprietary rights which may cover technology that may be required to implement this specification. Please address the information to the OASIS Executive Director.
+Copyright © OASIS Open 2002-2004. All Rights Reserved.
+This document and translations of it may be copied and furnished to others, and derivative works that comment on or otherwise explain it or assist in its implementation may be prepared, copied, published and distributed, in whole or in part, without restriction of any kind, provided that the above copyright notice and this paragraph are included on all such copies and derivative works. However, this document itself does not be modified in any way, such as by removing the copyright notice or references to OASIS, except as needed for the purpose of developing OASIS specifications, in which case the procedures for copyrights defined in the OASIS Intellectual Property Rights document must be followed, or as required to translate it into languages other than English.
+The limited permissions granted above are perpetual and will not be revoked by OASIS or its successors or assigns.
+This document and the information contained herein is provided on an “AS IS” basis and OASIS DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.-->
+<xsd:schema targetNamespace="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" elementFormDefault="qualified" attributeFormDefault="unqualified" version="0.1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <!--// Fault Codes ///////////////////////////////////////////-->
+  <xsd:simpleType name="tTimestampFault">
+    <xsd:annotation>
+      <xsd:documentation>This type defines the fault code value for Timestamp message expiration.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:QName">
+      <xsd:enumeration value="wsu:MessageExpired"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <!--// Global attributes ////////////////////////////////////-->
+  <xsd:attribute name="Id" type="xsd:ID">
+    <xsd:annotation>
+      <xsd:documentation>This global attribute supports annotating arbitrary elements with an ID.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+  <xsd:attributeGroup name="commonAtts">
+    <xsd:annotation>
+      <xsd:documentation>Convenience attribute group used to simplify this schema.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute ref="wsu:Id" use="optional"/>
+    <xsd:anyAttribute namespace="##other" processContents="lax"/>
+  </xsd:attributeGroup>
+  <!--// Utility types ////////////////////////////////////////-->
+  <xsd:complexType name="AttributedDateTime">
+    <xsd:annotation>
+      <xsd:documentation>This type is for elements whose [children] is a psuedo-dateTime and can have arbitrary attributes.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attributeGroup ref="wsu:commonAtts"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <xsd:complexType name="AttributedURI">
+    <xsd:annotation>
+      <xsd:documentation>This type is for elements whose [children] is an anyURI and can have arbitrary attributes.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:anyURI">
+        <xsd:attributeGroup ref="wsu:commonAtts"/>
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+  <!--// Timestamp header components ///////////////////////////-->
+  <xsd:complexType name="TimestampType">
+    <xsd:annotation>
+      <xsd:documentation>This complex type ties together the timestamp related elements into a composite type.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element ref="wsu:Created" minOccurs="0"/>
+      <xsd:element ref="wsu:Expires" minOccurs="0"/>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:any namespace="##other" processContents="lax"/>
+      </xsd:choice>
+    </xsd:sequence>
+    <xsd:attributeGroup ref="wsu:commonAtts"/>
+  </xsd:complexType>
+  <xsd:element name="Timestamp" type="wsu:TimestampType">
+    <xsd:annotation>
+      <xsd:documentation>This element allows Timestamps to be applied anywhere element wildcards are present,
+including as a SOAP header.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <!--global element decls to allow individual elements to appear anywhere-->
+  <xsd:element name="Expires" type="wsu:AttributedDateTime">
+    <xsd:annotation>
+      <xsd:documentation>This element allows an expiration time to be applied anywhere element wildcards are present.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:element name="Created" type="wsu:AttributedDateTime">
+    <xsd:annotation>
+      <xsd:documentation>This element allows a creation time to be applied anywhere element wildcards are present.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+</xsd:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://www.w3.org/2001/xml.xsd</con:url><con:content><![CDATA[<?xml-stylesheet href="../2008/09/xsd.xsl" type="text/xsl"?>
+<xs:schema targetNamespace="http://www.w3.org/XML/1998/namespace" xml:lang="en" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/1999/xhtml">
+  <xs:annotation>
+    <xs:documentation>
+      <div>
+        <h1>About the XML namespace</h1>
+        <div class="bodytext">
+          <p>This schema document describes the XML namespace, in a form
+      suitable for import by other schema documents.</p>
+          <p>
+            See
+            <a href="http://www.w3.org/XML/1998/namespace.html">http://www.w3.org/XML/1998/namespace.html</a>
+            and
+            <a href="http://www.w3.org/TR/REC-xml">http://www.w3.org/TR/REC-xml</a>
+            for information 
+      about this namespace.
+          </p>
+          <p>Note that local names in this namespace are intended to be
+      defined only by the World Wide Web Consortium or its subgroups.
+      The names currently defined in this namespace are listed below.
+      They should not be used with conflicting semantics by any Working
+      Group, specification, or document instance.</p>
+          <p>
+            See further below in this document for more information about
+            <a href="#usage">how to refer to this schema document from your own
+      XSD schema documents</a>
+            and about
+            <a href="#nsversioning">the
+      namespace-versioning policy governing this schema document</a>
+            .
+          </p>
+        </div>
+      </div>
+    </xs:documentation>
+  </xs:annotation>
+  <xs:attribute name="lang">
+    <xs:annotation>
+      <xs:documentation>
+        <div>
+          <h3>lang (as an attribute name)</h3>
+          <p>denotes an attribute whose value
+       is a language code for the natural language of the content of
+       any element; its value is inherited.  This name is reserved
+       by virtue of its definition in the XML specification.</p>
+        </div>
+        <div>
+          <h4>Notes</h4>
+          <p>Attempting to install the relevant ISO 2- and 3-letter
+      codes as the enumerated possible values is probably never
+      going to be a realistic possibility.</p>
+          <p>
+            See BCP 47 at
+            <a href="http://www.rfc-editor.org/rfc/bcp/bcp47.txt">http://www.rfc-editor.org/rfc/bcp/bcp47.txt</a>
+            and the IANA language subtag registry at
+            <a href="http://www.iana.org/assignments/language-subtag-registry">http://www.iana.org/assignments/language-subtag-registry</a>
+            for further information.
+          </p>
+          <p>The union allows for the 'un-declaration' of xml:lang with
+      the empty string.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:union memberTypes="xs:language">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value=""/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:union>
+    </xs:simpleType>
+  </xs:attribute>
+  <xs:attribute name="space">
+    <xs:annotation>
+      <xs:documentation>
+        <div>
+          <h3>space (as an attribute name)</h3>
+          <p>denotes an attribute whose
+       value is a keyword indicating what whitespace processing
+       discipline is intended for the content of the element; its
+       value is inherited.  This name is reserved by virtue of its
+       definition in the XML specification.</p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:NCName">
+        <xs:enumeration value="default"/>
+        <xs:enumeration value="preserve"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:attribute>
+  <xs:attribute name="base" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>
+        <div>
+          <h3>base (as an attribute name)</h3>
+          <p>denotes an attribute whose value
+       provides a URI to be used as the base for interpreting any
+       relative URIs in the scope of the element on which it
+       appears; its value is inherited.  This name is reserved
+       by virtue of its definition in the XML Base specification.</p>
+          <p>
+            See
+            <a href="http://www.w3.org/TR/xmlbase/">http://www.w3.org/TR/xmlbase/</a>
+            for information about this attribute.
+          </p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attribute name="id" type="xs:ID">
+    <xs:annotation>
+      <xs:documentation>
+        <div>
+          <h3>id (as an attribute name)</h3>
+          <p>denotes an attribute whose value
+       should be interpreted as if declared to be of type ID.
+       This name is reserved by virtue of its definition in the
+       xml:id specification.</p>
+          <p>
+            See
+            <a href="http://www.w3.org/TR/xml-id/">http://www.w3.org/TR/xml-id/</a>
+            for information about this attribute.
+          </p>
+        </div>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  <xs:attributeGroup name="specialAttrs">
+    <xs:attribute ref="xml:base"/>
+    <xs:attribute ref="xml:lang"/>
+    <xs:attribute ref="xml:space"/>
+    <xs:attribute ref="xml:id"/>
+  </xs:attributeGroup>
+  <xs:annotation>
+    <xs:documentation>
+      <div>
+        <h3>Father (in any context at all)</h3>
+        <div class="bodytext">
+          <p>denotes Jon Bosak, the chair of 
+      the original XML Working Group.  This name is reserved by 
+      the following decision of the W3C XML Plenary and 
+      XML Coordination groups:</p>
+          <blockquote>
+            <p>In appreciation for his vision, leadership and
+	dedication the W3C XML Plenary on this 10th day of
+	February, 2000, reserves for Jon Bosak in perpetuity
+	the XML name "xml:Father".</p>
+          </blockquote>
+        </div>
+      </div>
+    </xs:documentation>
+  </xs:annotation>
+  <xs:annotation>
+    <xs:documentation>
+      <div xml:id="usage" id="usage">
+        <h2>
+          <a name="usage">About this schema document</a>
+        </h2>
+        <div class="bodytext">
+          <p>
+            This schema defines attributes and an attribute group suitable
+      for use by schemas wishing to allow
+            <code>xml:base</code>
+            ,
+            <code>xml:lang</code>
+            ,
+            <code>xml:space</code>
+            or
+            <code>xml:id</code>
+            attributes on elements they define.
+          </p>
+          <p>To enable this, such a schema must import this schema for
+      the XML namespace, e.g. as follows:</p>
+          <pre>&lt;schema . . .>
+           . . .
+           &lt;import namespace="http://www.w3.org/XML/1998/namespace"
+                      schemaLocation="http://www.w3.org/2001/xml.xsd"/></pre>
+          <p>or</p>
+          <pre>&lt;import namespace="http://www.w3.org/XML/1998/namespace"
+                      schemaLocation="http://www.w3.org/2009/01/xml.xsd"/></pre>
+          <p>Subsequently, qualified reference to any of the attributes or the
+      group defined below will have the desired effect, e.g.</p>
+          <pre>&lt;type . . .>
+           . . .
+           &lt;attributeGroup ref="xml:specialAttrs"/></pre>
+          <p>will define a type which will schema-validate an instance element
+      with any of those attributes.</p>
+        </div>
+      </div>
+    </xs:documentation>
+  </xs:annotation>
+  <xs:annotation>
+    <xs:documentation>
+      <div id="nsversioning" xml:id="nsversioning">
+        <h2>
+          <a name="nsversioning">Versioning policy for this schema document</a>
+        </h2>
+        <div class="bodytext">
+          <p>
+            In keeping with the XML Schema WG's standard versioning
+      policy, this schema document will persist at
+            <a href="http://www.w3.org/2009/01/xml.xsd">http://www.w3.org/2009/01/xml.xsd</a>
+            .
+          </p>
+          <p>
+            At the date of issue it can also be found at
+            <a href="http://www.w3.org/2001/xml.xsd">http://www.w3.org/2001/xml.xsd</a>
+            .
+          </p>
+          <p>
+            The schema document at that URI may however change in the future,
+      in order to remain compatible with the latest version of XML
+      Schema itself, or with the XML namespace itself.  In other words,
+      if the XML Schema or XML namespaces change, the version of this
+      document at
+            <a href="http://www.w3.org/2001/xml.xsd">http://www.w3.org/2001/xml.xsd</a>
+            will change accordingly; the version at
+            <a href="http://www.w3.org/2009/01/xml.xsd">http://www.w3.org/2009/01/xml.xsd</a>
+            will not change.
+          </p>
+          <p>Previous dated (and unchanging) versions of this schema 
+      document are at:</p>
+          <ul>
+            <li>
+              <a href="http://www.w3.org/2009/01/xml.xsd">http://www.w3.org/2009/01/xml.xsd</a>
+            </li>
+            <li>
+              <a href="http://www.w3.org/2007/08/xml.xsd">http://www.w3.org/2007/08/xml.xsd</a>
+            </li>
+            <li>
+              <a href="http://www.w3.org/2004/10/xml.xsd">http://www.w3.org/2004/10/xml.xsd</a>
+            </li>
+            <li>
+              <a href="http://www.w3.org/2001/03/xml.xsd">http://www.w3.org/2001/03/xml.xsd</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </xs:documentation>
+  </xs:annotation>
+</xs:schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part><con:part><con:url>http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd</con:url><con:content><![CDATA[<!DOCTYPE schema PUBLIC "-//W3C//DTD XMLSchema 200102//EN" "http://www.w3.org/2001/XMLSchema.dtd">
+<!--Schema for XML Signatures
+    http://www.w3.org/2000/09/xmldsig#
+    $Revision: 1.1 $ on $Date: 2002/02/08 20:32:26 $ by $Author: reagle $
+
+    Copyright 2001 The Internet Society and W3C (Massachusetts Institute
+    of Technology, Institut National de Recherche en Informatique et en
+    Automatique, Keio University). All Rights Reserved.
+    http://www.w3.org/Consortium/Legal/
+
+    This document is governed by the W3C Software License [1] as described
+    in the FAQ [2].
+
+    [1] http://www.w3.org/Consortium/Legal/copyright-software-19980720
+    [2] http://www.w3.org/Consortium/Legal/IPR-FAQ-20000620.html#DTD-->
+<schema targetNamespace="http://www.w3.org/2000/09/xmldsig#" version="0.1" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <!--Basic Types Defined for Signatures-->
+  <simpleType name="CryptoBinary">
+    <restriction base="base64Binary"></restriction>
+  </simpleType>
+  <!--Start Signature-->
+  <element name="Signature" type="ds:SignatureType"/>
+  <complexType name="SignatureType">
+    <sequence>
+      <element ref="ds:SignedInfo"/>
+      <element ref="ds:SignatureValue"/>
+      <element ref="ds:KeyInfo" minOccurs="0"/>
+      <element ref="ds:Object" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <element name="SignatureValue" type="ds:SignatureValueType"/>
+  <complexType name="SignatureValueType">
+    <simpleContent>
+      <extension base="base64Binary">
+        <attribute name="Id" type="ID" use="optional"/>
+      </extension>
+    </simpleContent>
+  </complexType>
+  <!--Start SignedInfo-->
+  <element name="SignedInfo" type="ds:SignedInfoType"/>
+  <complexType name="SignedInfoType">
+    <sequence>
+      <element ref="ds:CanonicalizationMethod"/>
+      <element ref="ds:SignatureMethod"/>
+      <element ref="ds:Reference" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <element name="CanonicalizationMethod" type="ds:CanonicalizationMethodType"/>
+  <complexType name="CanonicalizationMethodType" mixed="true">
+    <sequence>
+      <any namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+      <!--(0,unbounded) elements from (1,1) namespace-->
+    </sequence>
+    <attribute name="Algorithm" type="anyURI" use="required"/>
+  </complexType>
+  <element name="SignatureMethod" type="ds:SignatureMethodType"/>
+  <complexType name="SignatureMethodType" mixed="true">
+    <sequence>
+      <element name="HMACOutputLength" minOccurs="0" type="ds:HMACOutputLengthType"/>
+      <any namespace="##other" minOccurs="0" maxOccurs="unbounded"/>
+      <!--(0,unbounded) elements from (1,1) external namespace-->
+    </sequence>
+    <attribute name="Algorithm" type="anyURI" use="required"/>
+  </complexType>
+  <!--Start Reference-->
+  <element name="Reference" type="ds:ReferenceType"/>
+  <complexType name="ReferenceType">
+    <sequence>
+      <element ref="ds:Transforms" minOccurs="0"/>
+      <element ref="ds:DigestMethod"/>
+      <element ref="ds:DigestValue"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+    <attribute name="URI" type="anyURI" use="optional"/>
+    <attribute name="Type" type="anyURI" use="optional"/>
+  </complexType>
+  <element name="Transforms" type="ds:TransformsType"/>
+  <complexType name="TransformsType">
+    <sequence>
+      <element ref="ds:Transform" maxOccurs="unbounded"/>
+    </sequence>
+  </complexType>
+  <element name="Transform" type="ds:TransformType"/>
+  <complexType name="TransformType" mixed="true">
+    <choice minOccurs="0" maxOccurs="unbounded">
+      <any namespace="##other" processContents="lax"/>
+      <!--(1,1) elements from (0,unbounded) namespaces-->
+      <element name="XPath" type="string"/>
+    </choice>
+    <attribute name="Algorithm" type="anyURI" use="required"/>
+  </complexType>
+  <!--End Reference-->
+  <element name="DigestMethod" type="ds:DigestMethodType"/>
+  <complexType name="DigestMethodType" mixed="true">
+    <sequence>
+      <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="Algorithm" type="anyURI" use="required"/>
+  </complexType>
+  <element name="DigestValue" type="ds:DigestValueType"/>
+  <simpleType name="DigestValueType">
+    <restriction base="base64Binary"/>
+  </simpleType>
+  <!--End SignedInfo-->
+  <!--Start KeyInfo-->
+  <element name="KeyInfo" type="ds:KeyInfoType"/>
+  <complexType name="KeyInfoType" mixed="true">
+    <choice maxOccurs="unbounded">
+      <element ref="ds:KeyName"/>
+      <element ref="ds:KeyValue"/>
+      <element ref="ds:RetrievalMethod"/>
+      <element ref="ds:X509Data"/>
+      <element ref="ds:PGPData"/>
+      <element ref="ds:SPKIData"/>
+      <element ref="ds:MgmtData"/>
+      <any processContents="lax" namespace="##other"/>
+      <!--(1,1) elements from (0,unbounded) namespaces-->
+    </choice>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <element name="KeyName" type="string"/>
+  <element name="MgmtData" type="string"/>
+  <element name="KeyValue" type="ds:KeyValueType"/>
+  <complexType name="KeyValueType" mixed="true">
+    <choice>
+      <element ref="ds:DSAKeyValue"/>
+      <element ref="ds:RSAKeyValue"/>
+      <any namespace="##other" processContents="lax"/>
+    </choice>
+  </complexType>
+  <element name="RetrievalMethod" type="ds:RetrievalMethodType"/>
+  <complexType name="RetrievalMethodType">
+    <sequence>
+      <element ref="ds:Transforms" minOccurs="0"/>
+    </sequence>
+    <attribute name="URI" type="anyURI"/>
+    <attribute name="Type" type="anyURI" use="optional"/>
+  </complexType>
+  <!--Start X509Data-->
+  <element name="X509Data" type="ds:X509DataType"/>
+  <complexType name="X509DataType">
+    <sequence maxOccurs="unbounded">
+      <choice>
+        <element name="X509IssuerSerial" type="ds:X509IssuerSerialType"/>
+        <element name="X509SKI" type="base64Binary"/>
+        <element name="X509SubjectName" type="string"/>
+        <element name="X509Certificate" type="base64Binary"/>
+        <element name="X509CRL" type="base64Binary"/>
+        <any namespace="##other" processContents="lax"/>
+      </choice>
+    </sequence>
+  </complexType>
+  <complexType name="X509IssuerSerialType">
+    <sequence>
+      <element name="X509IssuerName" type="string"/>
+      <element name="X509SerialNumber" type="integer"/>
+    </sequence>
+  </complexType>
+  <!--End X509Data-->
+  <!--Begin PGPData-->
+  <element name="PGPData" type="ds:PGPDataType"/>
+  <complexType name="PGPDataType">
+    <choice>
+      <sequence>
+        <element name="PGPKeyID" type="base64Binary"/>
+        <element name="PGPKeyPacket" type="base64Binary" minOccurs="0"/>
+        <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+      <sequence>
+        <element name="PGPKeyPacket" type="base64Binary"/>
+        <any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded"/>
+      </sequence>
+    </choice>
+  </complexType>
+  <!--End PGPData-->
+  <!--Begin SPKIData-->
+  <element name="SPKIData" type="ds:SPKIDataType"/>
+  <complexType name="SPKIDataType">
+    <sequence maxOccurs="unbounded">
+      <element name="SPKISexp" type="base64Binary"/>
+      <any namespace="##other" processContents="lax" minOccurs="0"/>
+    </sequence>
+  </complexType>
+  <!--End SPKIData-->
+  <!--End KeyInfo-->
+  <!--Start Object (Manifest, SignatureProperty)-->
+  <element name="Object" type="ds:ObjectType"/>
+  <complexType name="ObjectType" mixed="true">
+    <sequence minOccurs="0" maxOccurs="unbounded">
+      <any namespace="##any" processContents="lax"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+    <attribute name="MimeType" type="string" use="optional"/>
+    <!--add a grep facet-->
+    <attribute name="Encoding" type="anyURI" use="optional"/>
+  </complexType>
+  <element name="Manifest" type="ds:ManifestType"/>
+  <complexType name="ManifestType">
+    <sequence>
+      <element ref="ds:Reference" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <element name="SignatureProperties" type="ds:SignaturePropertiesType"/>
+  <complexType name="SignaturePropertiesType">
+    <sequence>
+      <element ref="ds:SignatureProperty" maxOccurs="unbounded"/>
+    </sequence>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <element name="SignatureProperty" type="ds:SignaturePropertyType"/>
+  <complexType name="SignaturePropertyType" mixed="true">
+    <choice maxOccurs="unbounded">
+      <any namespace="##other" processContents="lax"/>
+      <!--(1,1) elements from (1,unbounded) namespaces-->
+    </choice>
+    <attribute name="Target" type="anyURI" use="required"/>
+    <attribute name="Id" type="ID" use="optional"/>
+  </complexType>
+  <!--End Object (Manifest, SignatureProperty)-->
+  <!--Start Algorithm Parameters-->
+  <simpleType name="HMACOutputLengthType">
+    <restriction base="integer"/>
+  </simpleType>
+  <!--Start KeyValue Element-types-->
+  <element name="DSAKeyValue" type="ds:DSAKeyValueType"/>
+  <complexType name="DSAKeyValueType">
+    <sequence>
+      <sequence minOccurs="0">
+        <element name="P" type="ds:CryptoBinary"/>
+        <element name="Q" type="ds:CryptoBinary"/>
+      </sequence>
+      <element name="G" type="ds:CryptoBinary" minOccurs="0"/>
+      <element name="Y" type="ds:CryptoBinary"/>
+      <element name="J" type="ds:CryptoBinary" minOccurs="0"/>
+      <sequence minOccurs="0">
+        <element name="Seed" type="ds:CryptoBinary"/>
+        <element name="PgenCounter" type="ds:CryptoBinary"/>
+      </sequence>
+    </sequence>
+  </complexType>
+  <element name="RSAKeyValue" type="ds:RSAKeyValueType"/>
+  <complexType name="RSAKeyValueType">
+    <sequence>
+      <element name="Modulus" type="ds:CryptoBinary"/>
+      <element name="Exponent" type="ds:CryptoBinary"/>
+    </sequence>
+  </complexType>
+  <!--End KeyValue Element-types-->
+  <!--End Signature-->
+</schema>]]></con:content><con:type>http://www.w3.org/2001/XMLSchema</con:type></con:part></con:definitionCache><con:endpoints><con:endpoint>https://ws.ondemand.qas.com/ProOnDemand/V3/ProOnDemandService.asmx</con:endpoint></con:endpoints><con:operation id="441be67c-fa93-4b31-8ef4-e9404496d832" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoCanSearch" name="DoCanSearch" bindingOperationName="DoCanSearch" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="cc99b4ce-de3f-41db-ac35-4ba729807204" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetAddress" name="DoGetAddress" bindingOperationName="DoGetAddress" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="821264a4-383b-491a-9c9f-dc0f092445f0" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://0.0.0.0:8080/OnDemand-2011-03/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ond="http://www.qas.com/OnDemand-2011-03">
+   <soapenv:Header>
+      <ond:QAQueryHeader>
+         <ond:QAAuthentication>
+            <ond:Username>TEST-USERNAME</ond:Username>
+            <ond:Password>TEST-PASSWORD</ond:Password>
+         </ond:QAAuthentication>
+         <ond:Security>
+         </ond:Security>
+      </ond:QAQueryHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <ond:QAGetAddress Localisation="TEST-LOCALISATION" RequestTag="TEST-REQUEST-TAG">
+         <ond:Moniker>TEST-MONIKER</ond:Moniker>
+      </ond:QAGetAddress>
+   </soapenv:Body>
+</soapenv:Envelope>
+]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.qas.com/OnDemand-2011-03/DoGetAddress"/><con:wsrmConfig version="1.2"/></con:call></con:operation><con:operation id="a0e8faaf-be8e-47db-879d-86b647c6ce62" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetData" name="DoGetData" bindingOperationName="DoGetData" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="35a8c787-5432-43b9-9ac7-b136e12e11c3" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetDataMapDetail" name="DoGetDataMapDetail" bindingOperationName="DoGetDataMapDetail" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="3d43a9dd-669c-4637-a10d-c955bab848d3" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetExampleAddresses" name="DoGetExampleAddresses" bindingOperationName="DoGetExampleAddresses" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="793e120e-ef48-4466-aadb-b8cd6c5025b5" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetLayouts" name="DoGetLayouts" bindingOperationName="DoGetLayouts" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="c567dfcd-994f-4dc9-b346-b4c200d01e32" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetLicenseInfo" name="DoGetLicenseInfo" bindingOperationName="DoGetLicenseInfo" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="f616b53b-5b9e-40ff-9c21-a78df3780bb8" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetPromptSet" name="DoGetPromptSet" bindingOperationName="DoGetPromptSet" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="4e597ea7-5637-486e-a0f9-296bbe2dd9eb" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoGetSystemInfo" name="DoGetSystemInfo" bindingOperationName="DoGetSystemInfo" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="5d3e8a0f-32b5-4614-840d-e367db310624" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoRefine" name="DoRefine" bindingOperationName="DoRefine" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/></con:operation><con:operation id="bb55122c-d935-404a-b4e3-283227fb23db" isOneWay="false" action="http://www.qas.com/OnDemand-2011-03/DoSearch" name="DoSearch" bindingOperationName="DoSearch" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call id="8f2bfac1-722b-4a2a-b8be-2e63e845c8bf" name="Request 1"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://0.0.0.0:8080/OnDemand-2011-03/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+                  xmlns:ond="http://www.qas.com/OnDemand-2011-03">
+   <soapenv:Header>
+      <ond:QAQueryHeader>
+         <ond:QAAuthentication>
+            <ond:Username>TEST-USERNAME</ond:Username>
+            <ond:Password>TEST-PASSWORD</ond:Password>
+         </ond:QAAuthentication>
+         <ond:Security>
+         </ond:Security>
+      </ond:QAQueryHeader>
+   </soapenv:Header>
+   <soapenv:Body>
+      <ond:QASearch Localisation="TEST-LOCALISATION" RequestTag="TEST-REQUEST-TAG">
+         <ond:Country>GBR</ond:Country>
+         <ond:Engine Flatten="false" Intensity="Exact" PromptSet="OneLine"
+                     Threshold="5" Timeout="0">Singleline</ond:Engine>
+         <ond:Search>WA3 6XF</ond:Search>
+      </ond:QASearch>
+   </soapenv:Body>
+</soapenv:Envelope>
+]]></con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.qas.com/OnDemand-2011-03/DoSearch"/><con:wsrmConfig version="1.2"/></con:call></con:operation></con:interface><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/></con:soapui-project>
