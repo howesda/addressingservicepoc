@@ -15,6 +15,7 @@ public class ResponseResultDpa {
     private String dependentLocality;
     private String posttown;
     private String postcode;
+    private String poBoxNumber;
     private String rpc;
     private double xCoordinate;
     private double yCoordinate;
@@ -215,6 +216,21 @@ public class ResponseResultDpa {
 	@JsonProperty("POSTCODE")
 	public void setPostcode(String postcode) {
 		this.postcode = postcode;
+	}
+
+	/**
+	 * @return the poBoxNumber
+	 */
+	public String getPoBoxNumber() {
+		return poBoxNumber;
+	}
+
+	/**
+	 * @param poBoxNumber the poBoxNumber to set
+	 */
+	@JsonProperty("PO_BOX_NUMBER")
+	public void setPoBoxNumber(String poBoxNumber) {
+		this.poBoxNumber = poBoxNumber;
 	}
 
 	/**
