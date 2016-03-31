@@ -2,8 +2,10 @@ package uk.gov.dwp.service.osplaces.postcode;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
 	private ResponseHeader header;
 	private List<ResponseResult> results;

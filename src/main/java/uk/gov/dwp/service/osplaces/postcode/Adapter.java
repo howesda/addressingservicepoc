@@ -1,16 +1,32 @@
 package uk.gov.dwp.service.osplaces.postcode;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+
+import uk.gov.dwp.service.GetByPostcodeResponse;
+import uk.gov.dwp.service.GetByPostcodeResponseResult;
 
 public class Adapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Adapter.class);
-
     /**
 	 * @param response the response to process
 	 */
-	public Response handlePostcodeResponse(Response response) {
-		LOGGER.info("handlePostcodeResponse - response:\n " + response.toString());
-		return response;
+	public GetByPostcodeResponse handlePostcodeResponse(Response response) {
+		GetByPostcodeResponse getByPostcodeResponse = new GetByPostcodeResponse();
+		getByPostcodeResponse.setResults(new ArrayList<GetByPostcodeResponseResult>());
+		for (ResponseResult responseResult : response.getResults()) {
+			GetByPostcodeResponseResult getByPostcodeResponseResult = new GetByPostcodeResponseResult();
+			getByPostcodeResponseResult.setUprn(responseResult.getDpa().getUprn());
+			getByPostcodeResponseResult.setAddress(responseResult.getDpa().getAddress());
+			getByPostcodeResponseResult.setBuildingNumber(responseResult.getDpa().getBuildingNumber());
+			getByPostcodeResponseResult.setBuildingName(responseResult.getDpa().getBuildingName());
+			getByPostcodeResponseResult.setSubBuildingName(responseResult.getDpa().getSubBuildingName());
+			getByPostcodeResponseResult.setOrganisationName(responseResult.getDpa().getOrganisationName());
+			getByPostcodeResponseResult.setThoroughfareName(responseResult.getDpa().getThoroughfareName());
+			getByPostcodeResponseResult.setDependentLocality(responseResult.getDpa().getDependentLocality());
+			getByPostcodeResponseResult.setPosttown(responseResult.getDpa().getPosttown());
+			getByPostcodeResponseResult.setPostcode(responseResult.getDpa().getPostcode());
+			getByPostcodeResponseResult.setPoBoxNumber(responseResult.getDpa().getPoBoxNumber());
+			getByPostcodeResponse.getResults().add(getByPostcodeResponseResult);
+		}
+		return getByPostcodeResponse;
 	}
 }
