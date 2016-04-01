@@ -1,14 +1,15 @@
 package uk.gov.dwp.service.qas.ondemand_2011_03;
 
+import java.math.BigInteger;
+
 import com.qas.ondemand_2011_03.Address;
 import com.qas.ondemand_2011_03.AddressLineType;
+import com.qas.ondemand_2011_03.PicklistEntryType;
 import com.qas.ondemand_2011_03.QAAddressType;
 import com.qas.ondemand_2011_03.QAGetAddress;
+import com.qas.ondemand_2011_03.QAPicklistType;
 import com.qas.ondemand_2011_03.QASearch;
 import com.qas.ondemand_2011_03.QASearchResult;
-
-import uk.gov.dwp.service.osplaces.uprn.Response;
-import uk.gov.dwp.service.osplaces.uprn.ResponseResult;
 
 public class Adapter {
     private static final String BUILDING_NUMBER = "Building Number";
@@ -24,8 +25,25 @@ public class Adapter {
     /**
 	 * @param search the search to process
 	 */
-	public QASearchResult handleSearchRequest(QASearch search) {
-		return new QASearchResult();
+	public String handleSearchRequest(QASearch search) {
+		return search.getSearch();
+	}
+
+	/**
+	 * @param response the response to process
+	 */
+	public QASearchResult handlePostcodeResponse(uk.gov.dwp.service.osplaces.postcode.Response response) {
+		QASearchResult searchResult = new QASearchResult();
+		QAPicklistType picklistType = new QAPicklistType();
+		searchResult.setQAPicklist(picklistType);
+		picklistType.setTotal(new BigInteger(new Integer(response.getResults().get().size()).toString()));
+		for (uk.gov.dwp.service.osplaces.postcode.ResponseResult responseResult : response.getResults().get()) {
+			PicklistEntryType picklistEntryType = new PicklistEntryType();
+			picklistEntryType.setMoniker(responseResult.getDpa().getUprn());
+			picklistEntryType.setPicklist(responseResult.getDpa().getAddress());
+			picklistType.getPicklistEntry().add(picklistEntryType);
+		}
+		return searchResult;
 	}
 
     /**
@@ -47,8 +65,8 @@ public class Adapter {
 	/**
 	 * @param response the response to process
 	 */
-	public Address handleUprnResponse(Response response) {
-		ResponseResult responseResult = response.getResults().get(0);
+	public Address handleUprnResponse(uk.gov.dwp.service.osplaces.uprn.Response response) {
+		uk.gov.dwp.service.osplaces.uprn.ResponseResult responseResult = response.getResults().get(0);
 		Address address = new Address();
 		QAAddressType addressType = new QAAddressType();
 		address.setQAAddress(addressType);

@@ -70,6 +70,18 @@
       <camel:to uri="OnDemand-2011-03-Adapter"/>
       <camel:choice>
         <camel:when>
+          <camel:simple>${header.operationName} == 'DoSearch'</camel:simple>
+            <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/postcode</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpQuery">
+              <camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+            </camel:setHeader>
+            <camel:to uri="https://api.ordnancesurvey.co.uk"/>
+            <camel:unmarshal ref="OSPlacesPostcodeResponse"/>
+            <camel:to uri="OnDemand-2011-03-Adapter"/>
+        </camel:when>
+        <camel:when>
           <camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
             <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
             <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
