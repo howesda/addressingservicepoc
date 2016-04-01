@@ -29,7 +29,7 @@
 
   <!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
   <cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint"
-                   address="http://0.0.0.0:8080/OnDemand-2011-03/"
+                   address="{{ondemand.2011.03.endpoint.address}}"
                    serviceClass="com.qas.ondemand_2011_03.QAPortType"
                    serviceName="ns:QASOnDemandIntermediary"
                    wsdlURL="src/main/qas/wsdl/OnDemand-2011-03.wsdl"
@@ -37,6 +37,8 @@
   </cxf:cxfEndpoint>
 
   <camel:camelContext>
+  	<camel:propertyPlaceholder id="properties" location="classpath:route.properties"/>
+  
     <camel:dataFormats>
       <camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response"/>
       <camel:json id="GetByPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.GetByPostcodeResponse" include="NON_NULL"/>
@@ -48,7 +50,7 @@
         <camel:when>
           <camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
             <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpUri"><camel:constant>{{osaddress.endpoint}}</camel:constant></camel:setHeader>
             <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/postcode</camel:constant></camel:setHeader>
             <camel:setHeader headerName="CamelHttpQuery">
               <camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
