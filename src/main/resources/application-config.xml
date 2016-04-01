@@ -41,6 +41,7 @@
   
     <camel:dataFormats>
       <camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response"/>
+      <camel:json id="OSPlacesUprnResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.uprn.Response"/>
       <camel:json id="GetByPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.GetByPostcodeResponse" include="NON_NULL"/>
     </camel:dataFormats>
     <!-- REST ROUTE: For non-legacy requests -->
@@ -67,6 +68,20 @@
     <camel:route>
       <camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint"/>
       <camel:to uri="OnDemand-2011-03-Adapter"/>
+      <camel:choice>
+        <camel:when>
+          <camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
+            <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/uprn</camel:constant></camel:setHeader>
+            <camel:setHeader headerName="CamelHttpQuery">
+              <camel:simple>uprn=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+            </camel:setHeader>
+            <camel:to uri="https://api.ordnancesurvey.co.uk"/>
+            <camel:unmarshal ref="OSPlacesUprnResponse"/>
+            <camel:to uri="OnDemand-2011-03-Adapter"/>
+        </camel:when>
+      </camel:choice>
     </camel:route>
   </camel:camelContext>
 
