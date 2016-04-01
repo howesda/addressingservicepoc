@@ -1,6 +1,7 @@
 package uk.gov.dwp.service.osplaces.postcode;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Response {
 	private ResponseHeader header;
-	private List<ResponseResult> results;
+	private Optional<List<ResponseResult>> results = Optional.empty();
+	private Optional<RemoteError> error = Optional.empty();
 
 	/**
 	 * @return the header
@@ -28,7 +30,7 @@ public class Response {
 	/**
 	 * @return the results
 	 */
-	public List<ResponseResult> getResults() {
+	public Optional<List<ResponseResult>> getResults() {
 		return results;
 	}
 
@@ -37,6 +39,14 @@ public class Response {
 	 */
 	@JsonProperty("results")
 	public void setResults(List<ResponseResult> results) {
-		this.results = results;
+		this.results = Optional.of(results);
+	}
+
+	public Optional<RemoteError> getError() {
+		return error;
+	}
+
+	public void setError(RemoteError error) {
+		this.error = Optional.of(error);
 	}
 }
