@@ -24,7 +24,8 @@ public class AddressingService {
 	 */
     @Path("/postcode/{postcode}")
     @GET
-    public Response getByPostcode(@PathParam("postcode")String postcode) {
-    	return Response.status(Status.OK).entity(postcode).build();
+    public void getByPostcode(@PathParam("postcode")String postcode) {
+    	
+    	//return null;
     }
 }

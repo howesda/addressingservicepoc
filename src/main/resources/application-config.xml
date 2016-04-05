@@ -16,6 +16,7 @@
   <context:component-scan base-package="uk.gov.dwp.service"/>
   <bean id="addressingService" class="uk.gov.dwp.service.AddressingService"/>
   <bean id="OSPlacesPostcodeAdapter" class="uk.gov.dwp.service.osplaces.Adapter"/>
+  <bean id="ExceptionProcessor" class="uk.gov.dwp.service.osplaces.ExceptionProcessor"/>
   <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
 
   <!-- REST SERVICE: For non-legacy requests -->
@@ -28,7 +29,7 @@
   </cxf:rsServer>
 
   <!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
-  <cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint"
+	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint"
                    address="{{ondemand.2011.03.endpoint.address}}"
                    serviceClass="com.qas.ondemand_2011_03.QAPortType"
                    serviceName="ns:QASOnDemandIntermediary"
@@ -42,11 +43,15 @@
     <camel:dataFormats>
       <camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response"/>
       <camel:json id="OSPlacesUprnResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.uprn.Response"/>
-      <camel:json id="GetByPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.GetByPostcodeResponse" include="NON_NULL"/>
     </camel:dataFormats>
     <!-- REST ROUTE: For non-legacy requests -->
     <camel:route>
       <camel:from uri="cxfrs:bean:addressingRsServer"/>
+      <camel:onException>
+      	<camel:exception>java.lang.Exception</camel:exception>
+        <camel:handled><camel:constant>true</camel:constant></camel:handled>
+      	<camel:process ref="ExceptionProcessor"></camel:process>  
+      </camel:onException>
       <camel:choice>
         <camel:when>
           <camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
@@ -55,17 +60,16 @@
             <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/postcode</camel:constant></camel:setHeader>
             <camel:setHeader headerName="CamelHttpQuery">
               <camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
-            </camel:setHeader>
-            <camel:to uri="https://api.ordnancesurvey.co.uk"/>
-            <camel:unmarshal ref="OSPlacesPostcodeResponse"/>
-            <camel:to uri="OSPlacesPostcodeAdapter"/>
-            <camel:marshal ref="GetByPostcodeResponse"/>
+            </camel:setHeader>            
+ 			<camel:to uri="https://api.ordnancesurvey.co.uk"/>
+	        <camel:unmarshal ref="OSPlacesPostcodeResponse"/>
+	        <camel:to uri="OSPlacesPostcodeAdapter"/>
         </camel:when>
       </camel:choice>
     </camel:route>
 
     <!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
-    <camel:route>
+     <camel:route>
       <camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint"/>
       <camel:to uri="OnDemand-2011-03-Adapter"/>
       <camel:choice>

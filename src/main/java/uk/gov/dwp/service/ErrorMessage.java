@@ -1,11 +1,9 @@
 package uk.gov.dwp.service;
 
 public 	class ErrorMessage {
-	private int status = 500;
 	private String message;
 		
-	public ErrorMessage(int status, String message) {
-		this.status = status;
+	public ErrorMessage(String message) {
 		this.message = message;
 	}
 	
@@ -13,7 +11,4 @@ public 	class ErrorMessage {
 		return message;
 	}
 	
-	public int getStatus() {
-		return status;
-	}
 }
