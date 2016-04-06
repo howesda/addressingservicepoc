@@ -6,7 +6,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 /**
  * Implements the supported addressing services.
@@ -24,8 +23,15 @@ public class AddressingService {
 	 */
     @Path("/postcode/{postcode}")
     @GET
-    public void getByPostcode(@PathParam("postcode")String postcode) {
+    public Response getByPostcode(@PathParam("postcode")String postcode) {
     	
-    	//return null;
+    	return null;
+    }
+    
+    @Path("/uprn/{uprn}")
+    @GET
+    public Response getByUprn(@PathParam("uprn")String uprn) {
+    	
+    	return null;
     }
 }

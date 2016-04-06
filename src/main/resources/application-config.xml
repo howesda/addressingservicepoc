@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:cxf="http://camel.apache.org/schema/cxf"
-       xmlns:camel="http://camel.apache.org/schema/spring"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd
@@ -12,95 +10,133 @@
                            http://camel.apache.org/schema/cxf/camel-cxf.xsd
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring.xsd">
-  <import resource="classpath:META-INF/cxf/cxf.xml"/>
-  <context:component-scan base-package="uk.gov.dwp.service"/>
-  <bean id="addressingService" class="uk.gov.dwp.service.AddressingService"/>
-  <bean id="OSPlacesPostcodeAdapter" class="uk.gov.dwp.service.osplaces.Adapter"/>
-  <bean id="ExceptionProcessor" class="uk.gov.dwp.service.osplaces.ExceptionProcessor"/>
-  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
+                           
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
 
-  <!-- REST SERVICE: For non-legacy requests -->
-  <cxf:rsServer id="addressingRsServer"
-                address="http://0.0.0.0:8081"
-                serviceClass="uk.gov.dwp.service.AddressingService">
-    <cxf:providers>
-      <ref bean="jsonProvider"/>
-    </cxf:providers>
-  </cxf:rsServer>
+	<context:component-scan base-package="uk.gov.dwp.service" />
 
-  <!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
-	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint"
-                   address="{{ondemand.2011.03.endpoint.address}}"
-                   serviceClass="com.qas.ondemand_2011_03.QAPortType"
-                   serviceName="ns:QASOnDemandIntermediary"
-                   wsdlURL="src/main/qas/wsdl/OnDemand-2011-03.wsdl"
-                   xmlns:ns="http://www.qas.com/OnDemand-2011-03">
-  </cxf:cxfEndpoint>
+	<bean id="addressingService" class="uk.gov.dwp.service.AddressingService" />
+	<bean id="OSPlacesPostcodeAdapter" class="uk.gov.dwp.service.osplaces.Adapter" />
+	<bean id="ExceptionProcessor" class="uk.gov.dwp.service.osplaces.ExceptionProcessor" />
+	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider" />
 
-  <camel:camelContext>
-  	<camel:propertyPlaceholder id="properties" location="classpath:route.properties"/>
-  
-    <camel:dataFormats>
-      <camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response"/>
-      <camel:json id="OSPlacesUprnResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.uprn.Response"/>
-    </camel:dataFormats>
-    <!-- REST ROUTE: For non-legacy requests -->
-    <camel:route>
-      <camel:from uri="cxfrs:bean:addressingRsServer"/>
-      <camel:onException>
-      	<camel:exception>java.lang.Exception</camel:exception>
-        <camel:handled><camel:constant>true</camel:constant></camel:handled>
-      	<camel:process ref="ExceptionProcessor"></camel:process>  
-      </camel:onException>
-      <camel:choice>
-        <camel:when>
-          <camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
-            <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpUri"><camel:constant>{{osaddress.endpoint}}</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/postcode</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpQuery">
-              <camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
-            </camel:setHeader>            
- 			<camel:to uri="https://api.ordnancesurvey.co.uk"/>
-	        <camel:unmarshal ref="OSPlacesPostcodeResponse"/>
-	        <camel:to uri="OSPlacesPostcodeAdapter"/>
-        </camel:when>
-      </camel:choice>
-    </camel:route>
+	<!-- REST SERVICE: For non-legacy requests -->
+	<cxf:rsServer id="addressingRsServer" 
+	              address="http://0.0.0.0:8081"
+		          serviceClass="uk.gov.dwp.service.AddressingService">
+		<cxf:providers>
+			<ref bean="jsonProvider" />
+		</cxf:providers>
+	</cxf:rsServer>
 
-    <!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
-     <camel:route>
-      <camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint"/>
-      <camel:to uri="OnDemand-2011-03-Adapter"/>
-      <camel:choice>
-        <camel:when>
-          <camel:simple>${header.operationName} == 'DoSearch'</camel:simple>
-            <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/postcode</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpQuery">
-              <camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
-            </camel:setHeader>
-            <camel:to uri="https://api.ordnancesurvey.co.uk"/>
-            <camel:unmarshal ref="OSPlacesPostcodeResponse"/>
-            <camel:to uri="OnDemand-2011-03-Adapter"/>
-        </camel:when>
-        <camel:when>
-          <camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
-            <camel:setHeader headerName="CamelHttpMethod"><camel:constant>GET</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpUri"><camel:constant>https://api.ordnancesurvey.co.uk</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpPath"><camel:constant>places/v1/addresses/uprn</camel:constant></camel:setHeader>
-            <camel:setHeader headerName="CamelHttpQuery">
-              <camel:simple>uprn=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
-            </camel:setHeader>
-            <camel:to uri="https://api.ordnancesurvey.co.uk"/>
-            <camel:unmarshal ref="OSPlacesUprnResponse"/>
-            <camel:to uri="OnDemand-2011-03-Adapter"/>
-        </camel:when>
-      </camel:choice>
-    </camel:route>
-  </camel:camelContext>
+	<!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
+	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint" 
+	                 address="{{ondemand.2011.03.endpoint.address}}" 
+					 serviceClass="com.qas.ondemand_2011_03.QAPortType" 
+					 serviceName="ns:QASOnDemandIntermediary" 
+		             wsdlURL="src/main/qas/wsdl/OnDemand-2011-03.wsdl" 
+		             xmlns:ns="http://www.qas.com/OnDemand-2011-03"> 
+	</cxf:cxfEndpoint>
 
-  <!-- LEGACY CONVERTERS: There is one converter defined for each supported QAS version -->
-  <bean id="OnDemand-2011-03-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.Adapter"/>
+
+	<camel:endpoint id="osplaces" uri="{{osaddress.endpoint}}" />
+
+	<camel:camelContext>
+		<camel:propertyPlaceholder id="properties" location="classpath:route.properties" />
+
+		<camel:dataFormats>
+			<camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response" />
+		</camel:dataFormats>
+		
+		<!-- REST ROUTE: For non-legacy requests -->
+		<camel:route>
+			<camel:from uri="cxfrs:bean:addressingRsServer" />
+			<camel:to uri="direct:call_osplaces" />
+			<camel:to uri="OSPlacesPostcodeAdapter" />
+		</camel:route>
+
+		<!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
+		<camel:route>
+			<camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint" />
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == 'DoSearch'</camel:simple>
+					<camel:setHeader headerName="operationName">
+						<camel:constant>getByPostcode</camel:constant>
+					</camel:setHeader>
+					<camel:to uri="OnDemand-2011-03-Inbound-PostCode-Search-Adapter" />
+					<camel:to uri="direct:call_osplaces" />
+					<camel:to uri="OnDemand-2011-03-Outbound-Postcode-Search-Adapter" />
+				</camel:when>
+		 		<camel:when>
+					<camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
+					<camel:setHeader headerName="operationName">
+						<camel:constant>getByUprn</camel:constant>
+					</camel:setHeader>
+					<camel:to uri="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" />
+					<camel:to uri="direct:call_osplaces" />
+					<camel:to uri="OnDemand-2011-03-Outbound-Uprn-Search-Adapter" />
+
+				</camel:when>
+			</camel:choice>
+		</camel:route> 
+		
+		<!-- 
+			 Common Route which sends search queries to OS Places. The response is unmarshalled in to a 
+		     uk.gov.dwp.service.osplaces.postcode.Response object which can then be adapted to the correct format
+		     in the "calling" route
+		-->
+		<camel:route>
+			<camel:from uri="direct:call_osplaces" />
+			<camel:onException>
+				<camel:exception>java.lang.Exception</camel:exception>
+				<camel:handled>
+					<camel:constant>true</camel:constant>
+				</camel:handled>
+				<camel:process ref="ExceptionProcessor"></camel:process>
+			</camel:onException>
+			
+			
+			<camel:setHeader headerName="CamelHttpMethod">
+				<camel:constant>GET</camel:constant>
+			</camel:setHeader>
+			<camel:setHeader headerName="CamelHttpUri">
+				<camel:constant>{{osaddress.endpoint}}</camel:constant>
+			</camel:setHeader>
+			
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
+					<camel:setHeader headerName="CamelHttpPath">
+						<camel:constant>places/v1/addresses/postcode</camel:constant>
+					</camel:setHeader>
+					<camel:setHeader headerName="CamelHttpQuery">
+						<camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+					</camel:setHeader>			
+				</camel:when>
+							
+				<camel:when>
+					<camel:simple>${header.operationName} == 'getByUprn'</camel:simple>
+					<camel:setHeader headerName="CamelHttpPath">
+						<camel:constant>places/v1/addresses/uprn</camel:constant>
+					</camel:setHeader>
+					<camel:setHeader headerName="CamelHttpQuery">
+						<camel:simple>uprn=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+					</camel:setHeader>				
+				</camel:when>
+				
+			</camel:choice>
+				
+			<camel:to uri="ref:osplaces" />
+			<camel:unmarshal ref="OSPlacesPostcodeResponse" />
+				
+		</camel:route>
+	</camel:camelContext>
+
+	<!-- LEGACY CONVERTERS: -->
+	<bean id="OnDemand-2011-03-Inbound-PostCode-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchInboundAdapter" />
+	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapter" />
+	<bean id="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchInboundAdapter" />
+	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapter" />
+	
 </beans>
