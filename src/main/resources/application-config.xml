@@ -90,10 +90,12 @@
 			<camel:from uri="direct:call_osplaces" />
 			<camel:onException>
 				<camel:exception>java.lang.Exception</camel:exception>
-				<camel:handled>
+				<camel:continued>
 					<camel:constant>true</camel:constant>
-				</camel:handled>
+				</camel:continued>
+				
 				<camel:process ref="ExceptionProcessor"></camel:process>
+				
 			</camel:onException>
 			
 			
@@ -128,8 +130,13 @@
 			</camel:choice>
 				
 			<camel:to uri="ref:osplaces" />
-			<camel:unmarshal ref="OSPlacesPostcodeResponse" />
-				
+			<camel:choice>
+			<camel:when>
+				<camel:simple>${header.Exception} == null</camel:simple>
+				<camel:unmarshal ref="OSPlacesPostcodeResponse" />
+			
+			</camel:when>
+			</camel:choice>
 		</camel:route>
 	</camel:camelContext>
 
