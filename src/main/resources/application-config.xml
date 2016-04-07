@@ -41,12 +41,23 @@
 
 	<camel:endpoint id="osplaces" uri="{{osaddress.endpoint}}" />
 
-	<camel:camelContext>
+	<camel:camelContext >
 		<camel:propertyPlaceholder id="properties" location="classpath:route.properties" />
-
 		<camel:dataFormats>
 			<camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response" />
 		</camel:dataFormats>
+		
+		<!-- Global Exception Handler -->
+		<camel:onException>
+			<camel:exception>java.lang.Exception</camel:exception>
+			<camel:handled>
+				<camel:constant>true</camel:constant>
+			</camel:handled>
+			
+			<camel:process ref="ExceptionProcessor"></camel:process>
+			
+		</camel:onException>
+
 		
 		<!-- REST ROUTE: For non-legacy requests -->
 		<camel:route>
@@ -88,17 +99,7 @@
 		-->
 		<camel:route>
 			<camel:from uri="direct:call_osplaces" />
-			<camel:onException>
-				<camel:exception>java.lang.Exception</camel:exception>
-				<camel:continued>
-					<camel:constant>true</camel:constant>
-				</camel:continued>
-				
-				<camel:process ref="ExceptionProcessor"></camel:process>
-				
-			</camel:onException>
-			
-			
+						
 			<camel:setHeader headerName="CamelHttpMethod">
 				<camel:constant>GET</camel:constant>
 			</camel:setHeader>

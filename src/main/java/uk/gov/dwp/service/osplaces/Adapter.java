@@ -26,19 +26,6 @@ public class Adapter implements Processor{
 	@Override
 	public void process(Exchange exchange) throws Exception {
 		
-		Exception exception = (Exception) exchange.getProperty("Exception");
-		
-		if ( null != exception ){
-		
-			ErrorMessage message = new ErrorMessage(exception.getMessage());
-	
-			javax.ws.rs.core.Response response = javax.ws.rs.core.Response.serverError().entity(mapper.writeValueAsString(message)).build();
-	        exchange.getOut().setBody(response);
-	        
-	        System.out.println(exchange.getFromEndpoint());
-	        return;
-		}
-		
 		GetByPostcodeResponse getByPostcodeResponse = new GetByPostcodeResponse();
 		Response response = exchange.getIn().getBody(Response.class);
 
