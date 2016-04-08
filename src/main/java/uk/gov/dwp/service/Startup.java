@@ -23,7 +23,7 @@ public class Startup {
 	 * The entry point for running the Addressing Service standalone.
 	 */
     public static void main(String[] args) throws Exception {
-    	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("application-config.xml");
+    	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("cxf-config.xml","application-config.xml");
         Startup.addressingServiceApp.start(applicationContext);
 	}
 }

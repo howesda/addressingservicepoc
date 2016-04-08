@@ -1,29 +1,39 @@
 package uk.gov.dwp.service.osplaces;
 
-import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import uk.gov.dwp.service.ErrorMessage;
-
 public class ExceptionProcessor implements Processor {
-	ObjectMapper mapper = new ObjectMapper();
 	
+	private Map<String,ExceptionResponseSetter> responseSetterMap = new HashMap<>();
+
 	@Override
 	public void process(Exchange exchange) throws Exception {
 		Exception exception = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
+				
+		ExceptionResponseSetter responseSetter = getResponseSetter(exchange);
+		
+		responseSetter.setResponse(exchange, exception);
 
-		if ( exchange.getFromEndpoint().getEndpointUri().startsWith("cxfrs") ){
-			ErrorMessage message = new ErrorMessage(exception.getMessage());
-	
-			Response response = Response.serverError().entity(mapper.writeValueAsString(message)).build();
-	        exchange.getOut().setBody(response);		
-		} else {
-			// TODO - error handling for SOAP requests still need to be confirmed
-			System.out.println("SOAP error handling still to be confirmed");
+	}
+
+	private synchronized ExceptionResponseSetter getResponseSetter(Exchange exchange) {
+		
+		String responseSetterName = exchange.getProperty("EXCEPTION_RESPONSE_SETTER",String.class);
+		
+		ExceptionResponseSetter responseSetter = responseSetterMap.get(responseSetterName);
+		
+		if ( null == responseSetter ) {
+			responseSetter = (ExceptionResponseSetter) exchange.getContext().getRegistry().lookupByName(exchange.getProperty("EXCEPTION_RESPONSE_SETTER",String.class));
+			if ( null == responseSetter ){
+				responseSetter = new DefaultResponseSetter();
+			}
+			responseSetterMap.put(responseSetterName, responseSetter);
 		}
+		
+		return responseSetter;
 	}
 }

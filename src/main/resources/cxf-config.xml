@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:camel="http://camel.apache.org/schema/spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://camel.apache.org/schema/cxf
+                           http://camel.apache.org/schema/cxf/camel-cxf.xsd
+                           http://camel.apache.org/schema/spring
+                           http://camel.apache.org/schema/spring/camel-spring.xsd">
+                           
+	<context:component-scan base-package="uk.gov.dwp.service" />
+
+	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider" />
+
+	<!-- REST SERVICE: For non-legacy requests -->
+	<cxf:rsServer id="addressingRsServer" 
+	              address="http://0.0.0.0:8081"
+		          serviceClass="uk.gov.dwp.service.AddressingService">
+		<cxf:providers>
+			<ref bean="jsonProvider" />
+		</cxf:providers>
+	</cxf:rsServer>
+
+	<!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
+	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint" 
+	                 address="{{ondemand.2011.03.endpoint.address}}" 
+					 serviceClass="com.qas.ondemand_2011_03.QAPortType" 
+					 serviceName="ns:QASOnDemandIntermediary" 
+		             wsdlURL="src/main/qas/wsdl/OnDemand-2011-03.wsdl" 
+		             xmlns:ns="http://www.qas.com/OnDemand-2011-03"> 
+	</cxf:cxfEndpoint>
+
+
+
+	
+</beans>
