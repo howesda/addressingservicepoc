@@ -43,7 +43,7 @@
 		<camel:route id="REST_ROUTE">
 			<camel:from uri="cxfrs:bean:addressingRsServer" />
 			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
-				<camel:constant>REST_DUFF_ExceptionResponseSetter</camel:constant>
+				<camel:constant>RESTExceptionResponseSetter</camel:constant>
 			</camel:setProperty>
 			
 			<camel:to uri="direct:call_osplaces" />
@@ -54,7 +54,7 @@
  		<camel:route>
 			<camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint" />
 			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
-				<camel:constant>QAS_DUFF_ExceptionResponseSetter</camel:constant>
+				<camel:constant>QASExceptionResponseSetter</camel:constant>
 			</camel:setProperty>
 			
 			<camel:choice>
