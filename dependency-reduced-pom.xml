@@ -30,9 +30,11 @@
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/main/qas/wsdl/OnDemand-2011-03.wsdl</wsdl>
+                  <catalog>/Users/davehowes/IL2/addressingservicepoc/addressingservicepoc/src/main/qas/wsdl/BuildCatalog.cat</catalog>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>${basedir}/src/main/authenticate/ws-trust-1.3.wsdl</wsdl>
+                  <catalog>/Users/davehowes/IL2/addressingservicepoc/addressingservicepoc/src/main/qas/wsdl/BuildCatalog.cat</catalog>
                 </wsdlOption>
               </wsdlOptions>
             </configuration>
