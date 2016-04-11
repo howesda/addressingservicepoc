@@ -29,7 +29,6 @@
 	                 address="{{ondemand.2011.03.endpoint.address}}" 
 					 serviceClass="com.qas.ondemand_2011_03.QAPortType" 
 					 serviceName="ns:QASOnDemandIntermediary" 
-		             wsdlURL="src/main/qas/wsdl/OnDemand-2011-03.wsdl" 
 		             xmlns:ns="http://www.qas.com/OnDemand-2011-03"> 
 	</cxf:cxfEndpoint>
 
