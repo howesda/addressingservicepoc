@@ -13,7 +13,7 @@ The REST endpoint can be addressed as follows
 The SOAP endpoint is can be found at http://localhost:8082/OnDemand-2011-03/. Examples of the messages that can be processed can be found in the SoapUI project in the src/main/soap-ui folder
 
 ## Running ##
-The application is built as a "fat jar" file and can be run from the command like as follows
+The application is built as a "fat jar" file and can be run from the command line as follows
 >java -jar addressingservicepoc-0.0.1-SNAPSHOT.jar
 
 ## Supporting Projects ##
