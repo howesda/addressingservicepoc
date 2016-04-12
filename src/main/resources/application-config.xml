@@ -28,7 +28,7 @@
 		</camel:dataFormats>
 		
 		<!-- Global Exception Handler -->
-		<camel:onException>
+		<camel:onException id="GLOBAL_EXCEPTION_HANDLER">
 			<camel:exception>java.lang.Exception</camel:exception>
 			<camel:handled>
 				<camel:constant>true</camel:constant>
@@ -47,7 +47,7 @@
 			</camel:setProperty>
 			
 			<camel:to uri="direct:call_osplaces" />
-			<camel:to uri="OSPlacesPostcodeAdapter" />
+			<camel:to uri="OSPlacesPostcodeAdapter" id="REST_ADAPTER"/>
 		</camel:route>
 
 		<!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
@@ -102,7 +102,7 @@
 						<camel:constant>places/v1/addresses/postcode</camel:constant>
 					</camel:setHeader>
 					<camel:setHeader headerName="CamelHttpQuery">
-						<camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+						<camel:simple>postcode=${body}&amp;format=json&amp;dataset=DPA&amp;key=STUB_AUTH_KEY</camel:simple>
 					</camel:setHeader>			
 				</camel:when>
 							
@@ -112,14 +112,14 @@
 						<camel:constant>places/v1/addresses/uprn</camel:constant>
 					</camel:setHeader>
 					<camel:setHeader headerName="CamelHttpQuery">
-						<camel:simple>uprn=${body}&amp;format=json&amp;dataset=DPA&amp;key=YOUR_API_KEY</camel:simple>
+						<camel:simple>uprn=${body}&amp;format=json&amp;dataset=DPA&amp;key=STUB_AUTH_KEY</camel:simple>
 					</camel:setHeader>				
 				</camel:when>
 				
 			</camel:choice>
 				
 			<camel:to uri="ref:osplaces" />
-			<camel:unmarshal ref="OSPlacesPostcodeResponse" />
+			<camel:unmarshal id="UNMARSHALL_REMOTE_RESPONSE" ref="OSPlacesPostcodeResponse" />
 			
 		</camel:route>
 	</camel:camelContext>
