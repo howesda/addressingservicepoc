@@ -153,6 +153,11 @@
       <version>${camel.version}</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-sql</artifactId>
+      <version>${camel.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-core</artifactId>
       <version>${spring.version}</version>
@@ -165,6 +170,11 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
       <version>${spring.version}</version>
     </dependency>
     <dependency>
@@ -187,8 +197,8 @@
       <artifactId>jettison</artifactId>
       <version>${jettison.version}</version>
     </dependency>
-    
 
-    
+
+
   </dependencies>
 </project>

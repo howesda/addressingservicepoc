@@ -27,7 +27,13 @@ public class AddressingService {
     	
     	return null;
     }
-    
+
+	/**
+	 * @param uprn
+	 *            the unique property reference number.
+	 * @return a structure containing the address corresponding to the
+	 *         supplied unique property reference number.
+	 */
     @Path("/uprn/{uprn}")
     @GET
     public Response getByUprn(@PathParam("uprn")String uprn) {

@@ -16,23 +16,37 @@
 	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider" />
 
 	<!-- REST SERVICE: For non-legacy requests -->
-	<cxf:rsServer id="addressingRsServer" 
+	<!-- OS Places -->
+	<cxf:rsServer id="addressingRsServerOSPlaces"
 	              address="http://0.0.0.0:8081"
 		          serviceClass="uk.gov.dwp.service.AddressingService">
 		<cxf:providers>
 			<ref bean="jsonProvider" />
 		</cxf:providers>
 	</cxf:rsServer>
+	<!-- Database - AddressBase on PostgreSQL -->
+	<cxf:rsServer id="addressingRsServerDatabase"
+				  address="http://0.0.0.0:8091"
+				  serviceClass="uk.gov.dwp.service.AddressingService">
+		<cxf:providers>
+			<ref bean="jsonProvider" />
+		</cxf:providers>
+	</cxf:rsServer>
 
 	<!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
-	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint" 
-	                 address="{{ondemand.2011.03.endpoint.address}}" 
+	<!-- OS Places -->
+	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint-OSPlaces"
+	                 address="{{ondemand.2011.03.endpoint.address.osplaces}}"
 					 serviceClass="com.qas.ondemand_2011_03.QAPortType" 
 					 serviceName="ns:QASOnDemandIntermediary" 
 		             xmlns:ns="http://www.qas.com/OnDemand-2011-03"> 
 	</cxf:cxfEndpoint>
+	<!-- Database - AddressBase on PostgreSQL -->
+	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint-Database"
+					 address="{{ondemand.2011.03.endpoint.address.database}}"
+					 serviceClass="com.qas.ondemand_2011_03.QAPortType"
+					 serviceName="ns:QASOnDemandIntermediary"
+					 xmlns:ns="http://www.qas.com/OnDemand-2011-03">
+	</cxf:cxfEndpoint>
 
-
-
-	
 </beans>
