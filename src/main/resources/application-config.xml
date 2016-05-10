@@ -11,6 +11,16 @@
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+	<context:property-placeholder location="classpath:datasource.properties" />
+	<bean id="addressBaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver"/>
+		<property name="url" value="${datasource.url}"/>
+		<property name="username" value="${datasource.username}"/>
+		<property name="password" value="${datasource.password}"/>
+	</bean>
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+		<property name="dataSource" ref="addressBaseDataSource"/>
+	</bean>
 
 	<bean id="addressingService" class="uk.gov.dwp.service.AddressingService" />
 	<bean id="OSPlacesPostcodeAdapter" class="uk.gov.dwp.service.osplaces.Adapter" />
