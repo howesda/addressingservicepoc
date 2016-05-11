@@ -5,12 +5,9 @@ import com.qas.ondemand_2011_03.AddressLineType;
 import com.qas.ondemand_2011_03.QAAddressType;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import uk.gov.dwp.service.osplaces.postcode.Response;
-import uk.gov.dwp.service.osplaces.postcode.ResponseResult;
 
 import java.util.List;
-
-// TODO - NJM: Modify to retrieve the results according to the database format
+import java.util.Map;
 
 public class UprnSearchOutboundAdapterDatabase implements Processor {
     private static final String BUILDING_NUMBER = "Building Number";
@@ -23,30 +20,31 @@ public class UprnSearchOutboundAdapterDatabase implements Processor {
     private static final String POSTCODE = "Postcode";
     private static final String PO_BOX_NUMBER = "PO Box Number";
 
+	/**
+	 * @param exchange the exchange to process
+	 */
 	@Override
 	public void process(Exchange exchange) throws Exception {
-		Response response = exchange.getIn().getBody(Response.class);
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> rows = exchange.getIn().getBody(List.class);
 		Address address = new Address();
 		
-		// TODO - NJM: Sort out error handling
-		
-		if (response.getResults().isPresent()) {
-			List<ResponseResult> results = response.getResults().get();
-			ResponseResult responseResult = results.get(0);
-	
-			QAAddressType addressType = new QAAddressType();
-			address.setQAAddress(addressType);
-			addAddressLineType(addressType, BUILDING_NUMBER, responseResult.getDpa().getBuildingNumber());
-			addAddressLineType(addressType, BUILDING_NAME, responseResult.getDpa().getBuildingName());
-			addAddressLineType(addressType, SUB_BUILDING_NAME, responseResult.getDpa().getSubBuildingName());
-			addAddressLineType(addressType, ORGANISATION_NAME, responseResult.getDpa().getOrganisationName());
-			addAddressLineType(addressType, THOROUGHFARE_NAME, responseResult.getDpa().getThoroughfareName());
-			addAddressLineType(addressType, DEPENDENT_LOCALITY, responseResult.getDpa().getDependentLocality());
-			addAddressLineType(addressType, POSTTOWN, responseResult.getDpa().getPosttown());
-			addAddressLineType(addressType, POSTCODE, responseResult.getDpa().getPostcode());
-			addAddressLineType(addressType, PO_BOX_NUMBER, responseResult.getDpa().getPoBoxNumber());
-		}
-		
+		// TODO: Sort out error handling
+
+		Map<String, Object> row = rows.get(0);
+
+		QAAddressType addressType = new QAAddressType();
+		address.setQAAddress(addressType);
+		addAddressLineType(addressType, BUILDING_NUMBER, (String)row.get("building_number"));
+		addAddressLineType(addressType, BUILDING_NAME, (String)row.get("building_name"));
+		addAddressLineType(addressType, SUB_BUILDING_NAME, (String)row.get("sub_building_name"));
+		addAddressLineType(addressType, ORGANISATION_NAME, (String)row.get("organisation_name"));
+		addAddressLineType(addressType, THOROUGHFARE_NAME, (String)row.get("thoroughfare"));
+		addAddressLineType(addressType, DEPENDENT_LOCALITY, (String)row.get("dependent_locality"));
+		addAddressLineType(addressType, POSTTOWN, (String)row.get("post_town"));
+		addAddressLineType(addressType, POSTCODE, (String)row.get("postcode"));
+		addAddressLineType(addressType, PO_BOX_NUMBER, (String)row.get("po_box_number"));
+
 		exchange.getOut().setBody(address);
 	}
 	
@@ -58,5 +56,4 @@ public class UprnSearchOutboundAdapterDatabase implements Processor {
 			addressType.getAddressLine().add(addressLineType);
 		}
 	}
-
 }
