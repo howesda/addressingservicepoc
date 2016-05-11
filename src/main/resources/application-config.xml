@@ -185,10 +185,10 @@
 					<camel:setHeader headerName="query">
 						<camel:constant>{{sql.selectByPostcode}}</camel:constant>
 					</camel:setHeader>
-					<camel:to uri="DatabasePostcodeExpressionBuilder?method=setExpressionTexts({{sql.selectByPostcodeFullExpressionStart}},
-					                                                                           {{sql.selectByPostcodeFullExpressionEnd}},
-					                                                                           {{sql.selectByPostcodePartialExpressionStart}},
-					                                                                           {{sql.selectByPostcodePartialExpressionEnd}})" />
+					<camel:to uri="bean:DatabasePostcodeExpressionBuilder?method=setExpressionTexts(&quot;{{sql.selectByPostcodeFullExpressionStart}}&quot;,
+					                                                                           		&quot;{{sql.selectByPostcodeFullExpressionEnd}}&quot;,
+					                                                                           		&quot;{{sql.selectByPostcodePartialExpressionStart}}&quot;,
+					                                                                           		&quot;{{sql.selectByPostcodePartialExpressionEnd}}&quot;)" />
 					<camel:setHeader headerName="postcodeExpression">
 						<camel:constant>${body}</camel:constant>
 					</camel:setHeader>
