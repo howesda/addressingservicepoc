@@ -13,7 +13,7 @@ import com.qas.ondemand_2011_03.QASearchResult;
 import uk.gov.dwp.service.osplaces.postcode.Response;
 import uk.gov.dwp.service.osplaces.postcode.ResponseResult;
 
-public class PostcodeSearchOutboundAdapter implements Processor{
+public class PostcodeSearchOutboundAdapterOSPlaces implements Processor{
 
 
 	/**

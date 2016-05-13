@@ -12,7 +12,7 @@ import com.qas.ondemand_2011_03.QAAddressType;
 import uk.gov.dwp.service.osplaces.postcode.Response;
 import uk.gov.dwp.service.osplaces.postcode.ResponseResult;
 
-public class UprnSearchOutboundAdapter implements Processor{
+public class UprnSearchOutboundAdapterOSPlaces implements Processor{
     private static final String BUILDING_NUMBER = "Building Number";
     private static final String BUILDING_NAME = "Building Name";
     private static final String SUB_BUILDING_NAME = "Sub Building Name";

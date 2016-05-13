@@ -10,16 +10,26 @@
                            http://camel.apache.org/schema/cxf/camel-cxf.xsd
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring.xsd">
-                           
+
+	<context:property-placeholder location="classpath:datasource.properties" />
+	<bean id="addressBaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="org.postgresql.Driver"/>
+		<property name="url" value="${datasource.url}"/>
+		<property name="username" value="${datasource.username}"/>
+		<property name="password" value="${datasource.password}"/>
+	</bean>
+	<bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+		<property name="dataSource" ref="addressBaseDataSource"/>
+	</bean>
 
 	<bean id="addressingService" class="uk.gov.dwp.service.AddressingService" />
 	<bean id="OSPlacesPostcodeAdapter" class="uk.gov.dwp.service.osplaces.Adapter" />
+	<bean id="DatabasePostcodeBuilder" class="uk.gov.dwp.service.database.PostcodeBuilder" />
+	<bean id="DatabasePostcodeAdapter" class="uk.gov.dwp.service.database.Adapter" />
+	<bean id="DatabaseUprnBuilder" class="uk.gov.dwp.service.database.UprnBuilder" />
 	<bean id="ExceptionProcessor" class="uk.gov.dwp.service.osplaces.ExceptionProcessor" />
 	<bean id="RESTExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.RESTExceptionResponseSetter" />
 	<bean id="QASExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.QASExceptionResponseSetter" />
-	
-
-	<camel:endpoint id="osplaces" uri="{{osaddress.endpoint}}" />
 
 	<camel:camelContext >
 		<camel:propertyPlaceholder id="properties" location="classpath:route.properties" />
@@ -38,21 +48,33 @@
 			
 		</camel:onException>
 
-		
+
 		<!-- REST ROUTE: For non-legacy requests -->
-		<camel:route id="REST_ROUTE">
-			<camel:from uri="cxfrs:bean:addressingRsServer" />
+		<!-- OS Places -->
+		<camel:route id="REST_ROUTE_OSPLACES">
+			<camel:from uri="cxfrs:bean:addressingRsServerOSPlaces" />
 			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
 				<camel:constant>RESTExceptionResponseSetter</camel:constant>
 			</camel:setProperty>
 			
 			<camel:to uri="direct:call_osplaces" />
-			<camel:to uri="OSPlacesPostcodeAdapter" id="REST_ADAPTER"/>
+			<camel:to uri="OSPlacesPostcodeAdapter" id="ADAPTER_OSPLACES"/>
+		</camel:route>
+		<!-- Database - AddressBase on PostgreSQL -->
+		<camel:route id="REST_ROUTE_DATABASE">
+			<camel:from uri="cxfrs:bean:addressingRsServerDatabase" />
+			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
+				<camel:constant>RESTExceptionResponseSetter</camel:constant>
+			</camel:setProperty>
+
+			<camel:to uri="direct:call_database" />
+			<camel:to uri="DatabasePostcodeAdapter" id="ADAPTER_DATABASE"/>
 		</camel:route>
 
 		<!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
+		<!-- OS Places -->
  		<camel:route>
-			<camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint" />
+			<camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint-OSPlaces" />
 			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
 				<camel:constant>QASExceptionResponseSetter</camel:constant>
 			</camel:setProperty>
@@ -65,7 +87,7 @@
 					</camel:setHeader>
 					<camel:to uri="OnDemand-2011-03-Inbound-PostCode-Search-Adapter" />
 					<camel:to uri="direct:call_osplaces" />
-					<camel:to uri="OnDemand-2011-03-Outbound-Postcode-Search-Adapter" />
+					<camel:to uri="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-OSPlaces" />
 				</camel:when>
 		 		<camel:when>
 					<camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
@@ -74,18 +96,45 @@
 					</camel:setHeader>
 					<camel:to uri="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" />
 					<camel:to uri="direct:call_osplaces" />
-					<camel:to uri="OnDemand-2011-03-Outbound-Uprn-Search-Adapter" />
-
+					<camel:to uri="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-OSPlaces" />
 				</camel:when>
 			</camel:choice>
 		</camel:route>
-		
+		<!-- Database - AddressBase on PostgreSQL -->
+		<camel:route>
+			<camel:from uri="cxf:bean:OnDemand-2011-03-Endpoint-Database" />
+			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
+				<camel:constant>QASExceptionResponseSetter</camel:constant>
+			</camel:setProperty>
+
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == 'DoSearch'</camel:simple>
+					<camel:setHeader headerName="operationName">
+						<camel:constant>getByPostcode</camel:constant>
+					</camel:setHeader>
+					<camel:to uri="OnDemand-2011-03-Inbound-PostCode-Search-Adapter" />
+					<camel:to uri="direct:call_database" />
+					<camel:to uri="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-Database" />
+				</camel:when>
+				<camel:when>
+					<camel:simple>${header.operationName} == 'DoGetAddress'</camel:simple>
+					<camel:setHeader headerName="operationName">
+						<camel:constant>getByUprn</camel:constant>
+					</camel:setHeader>
+					<camel:to uri="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" />
+					<camel:to uri="direct:call_database" />
+					<camel:to uri="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-Database" />
+				</camel:when>
+			</camel:choice>
+		</camel:route>
+
 		<!-- 
 			 Common Route which sends search queries to OS Places. The response is unmarshalled in to a 
 		     uk.gov.dwp.service.osplaces.postcode.Response object which can then be adapted to the correct format
 		     in the "calling" route
 		-->
-		<camel:route id="COMMON_ROUTE">
+		<camel:route id="COMMON_ROUTE_OSPLACES">
 			<camel:from uri="direct:call_osplaces" />
 						
 			<camel:setHeader headerName="CamelHttpMethod">
@@ -118,16 +167,66 @@
 				
 			</camel:choice>
 				
-			<camel:to uri="ref:osplaces" />
-			<camel:unmarshal id="UNMARSHALL_REMOTE_RESPONSE" ref="OSPlacesPostcodeResponse" />
+			<camel:to uri="{{osaddress.endpoint}}" />
+			<camel:unmarshal id="UNMARSHALL_REMOTE_RESPONSE_OSPLACES" ref="OSPlacesPostcodeResponse" />
 			
+		</camel:route>
+
+		<!--
+			 Common Route which sends SQL queries to a PostgreSQL database containing AddressBase data. The results
+			 are mapped to a List (one entry for each row) of Maps (one entry for each column using the column
+			 name as the key) which can then be adapted to the correct format in the "calling" route
+		-->
+		<camel:route id="COMMON_ROUTE_DATABASE">
+			<camel:from uri="direct:call_database"/>
+
+			<camel:choice>
+				<camel:when>
+					<camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
+					<camel:setHeader headerName="wildcardSymbol">
+						<camel:constant>%</camel:constant>
+					</camel:setHeader>
+					<camel:setHeader headerName="postcode">
+						<camel:method bean="DatabasePostcodeBuilder" method="buildPostcode(${body}, ${header.wildcardSymbol})"/>
+					</camel:setHeader>
+					<camel:choice>
+						<camel:when>
+							<camel:simple>${header.postcode.getRight} == true</camel:simple>
+							<camel:setHeader headerName="fullPostcode">
+								<camel:simple>${header.postcode.getLeft}</camel:simple>
+							</camel:setHeader>
+							<camel:log message="Executing query for full postcode with parameter: '${header.fullPostcode}'"/>
+							<camel:to uri="sql:SELECT * FROM addressbase WHERE POSTCODE = :#fullPostcode"/>
+						</camel:when>
+						<camel:when>
+							<camel:simple>${header.postcode.getRight} == false</camel:simple>
+							<camel:setHeader headerName="partialPostcode">
+								<camel:simple>${header.postcode.getLeft}</camel:simple>
+							</camel:setHeader>
+							<camel:log message="Executing query for partial postcode with parameter: '${header.partialPostcode}'"/>
+							<camel:to uri="sql:SELECT * FROM addressbase WHERE POSTCODE LIKE :#partialPostcode LIMIT 100"/>
+						</camel:when>
+					</camel:choice>
+				</camel:when>
+
+				<camel:when>
+					<camel:simple>${header.operationName} == 'getByUprn'</camel:simple>
+					<camel:setHeader headerName="uprn">
+						<camel:method bean="DatabaseUprnBuilder" method="buildUprn(${body})"/>
+					</camel:setHeader>
+					<camel:log message="Executing query for uprn with parameter: '${header.uprn}'"/>
+					<camel:to uri="sql:SELECT * FROM addressbase WHERE UPRN = :#uprn::bigint"/>
+				</camel:when>
+			</camel:choice>
 		</camel:route>
 	</camel:camelContext>
 
 	<!-- LEGACY CONVERTERS: -->
 	<bean id="OnDemand-2011-03-Inbound-PostCode-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchInboundAdapter" />
-	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapter" />
+	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-OSPlaces" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapterOSPlaces" />
+	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-Database" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapterDatabase" />
 	<bean id="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchInboundAdapter" />
-	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapter" />
-	
+	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-OSPlaces" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapterOSPlaces" />
+	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-Database" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapterDatabase" />
+
 </beans>
