@@ -189,24 +189,8 @@
 					<camel:setHeader headerName="postcode">
 						<camel:method bean="DatabasePostcodeBuilder" method="buildPostcode(${body}, ${header.wildcardSymbol})"/>
 					</camel:setHeader>
-					<camel:choice>
-						<camel:when>
-							<camel:simple>${header.postcode.getRight} == true</camel:simple>
-							<camel:setHeader headerName="fullPostcode">
-								<camel:simple>${header.postcode.getLeft}</camel:simple>
-							</camel:setHeader>
-							<camel:log message="Executing query for full postcode with parameter: '${header.fullPostcode}'"/>
-							<camel:to uri="sql:SELECT * FROM addressbase WHERE POSTCODE = :#fullPostcode"/>
-						</camel:when>
-						<camel:when>
-							<camel:simple>${header.postcode.getRight} == false</camel:simple>
-							<camel:setHeader headerName="partialPostcode">
-								<camel:simple>${header.postcode.getLeft}</camel:simple>
-							</camel:setHeader>
-							<camel:log message="Executing query for partial postcode with parameter: '${header.partialPostcode}'"/>
-							<camel:to uri="sql:SELECT * FROM addressbase WHERE POSTCODE LIKE :#partialPostcode LIMIT 100"/>
-						</camel:when>
-					</camel:choice>
+					<camel:log message="Executing query for postcode with parameter: '${header.postcode}'"/>
+					<camel:to uri="sql:SELECT * FROM addressbase WHERE (lower(replace(POSTCODE, ' ', ''))) LIKE :#postcode LIMIT 100"/>
 				</camel:when>
 
 				<camel:when>
