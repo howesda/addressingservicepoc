@@ -31,6 +31,7 @@ public class FallBackPropertiesPlaceHolder implements PropertiesFunction {
 			}
 				
 			props.load(is);
+						
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
