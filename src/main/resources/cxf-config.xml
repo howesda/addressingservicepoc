@@ -34,16 +34,17 @@
 	</cxf:rsServer>
 
 	<!-- LEGACY ENDPOINTS: There is one endpoint defined for each supported QAS version -->
+
 	<!-- OS Places -->
 	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint-OSPlaces"
-	                 address="{{ondemand.2011.03.endpoint.address.osplaces}}"
+	                 address="{{props:ondemand.2011.03.endpoint.address.osplaces}}"
 					 serviceClass="com.qas.ondemand_2011_03.QAPortType" 
 					 serviceName="ns:QASOnDemandIntermediary" 
 		             xmlns:ns="http://www.qas.com/OnDemand-2011-03"> 
 	</cxf:cxfEndpoint>
 	<!-- Database - AddressBase on PostgreSQL -->
 	<cxf:cxfEndpoint id="OnDemand-2011-03-Endpoint-Database"
-					 address="{{ondemand.2011.03.endpoint.address.database}}"
+					 address="{{props:ondemand.2011.03.endpoint.address.database}}"
 					 serviceClass="com.qas.ondemand_2011_03.QAPortType"
 					 serviceName="ns:QASOnDemandIntermediary"
 					 xmlns:ns="http://www.qas.com/OnDemand-2011-03">

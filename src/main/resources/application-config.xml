@@ -31,8 +31,16 @@
 	<bean id="RESTExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.RESTExceptionResponseSetter" />
 	<bean id="QASExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.QASExceptionResponseSetter" />
 
+	<bean id="propsFunction" class="uk.gov.dwp.service.FallBackPropertiesPlaceHolder" />
+	
+
+	<camel:endpoint id="osplaces" uri="{{props:osaddress.endpoint}}" />
+
+
 	<camel:camelContext >
-		<camel:propertyPlaceholder id="properties" location="classpath:route.properties" />
+		<camel:propertyPlaceholder id="properties" location="none" ignoreMissingLocation="true">
+			<camel:propertiesFunction ref="propsFunction"/>
+		</camel:propertyPlaceholder>
 		<camel:dataFormats>
 			<camel:json id="OSPlacesPostcodeResponse" library="Jackson" unmarshalTypeName="uk.gov.dwp.service.osplaces.postcode.Response" />
 		</camel:dataFormats>
@@ -71,6 +79,21 @@
 			<camel:to uri="DatabasePostcodeAdapter" id="ADAPTER_DATABASE"/>
 		</camel:route>
 
+		<!-- JMS ROUTE: For JMS requests -->
+<!-- 		<camel:route id="JMS_ROUTE">
+			<camel:from uri="activemq:queue:addresslookup" />
+			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
+				<camel:constant>RESTExceptionResponseSetter</camel:constant>
+			</camel:setProperty>
+			<camel:setHeader headerName="operationName">
+  				<camel:constant>getByPostcode</camel:constant>
+			</camel:setHeader>
+			
+			<camel:log message="${body}"/>
+			<camel:to uri="direct:call_osplaces" />
+			<camel:to uri="OSPlacesPostcodeAdapter" id="JMS_ADAPTER"/>
+			
+		</camel:route> -->
 		<!-- LEGACY ROUTES: There is one route defined for each supported QAS version -->
 		<!-- OS Places -->
  		<camel:route>
@@ -136,12 +159,13 @@
 		-->
 		<camel:route id="COMMON_ROUTE_OSPLACES">
 			<camel:from uri="direct:call_osplaces" />
+			<camel:log message="${body}"/>
 						
 			<camel:setHeader headerName="CamelHttpMethod">
 				<camel:constant>GET</camel:constant>
 			</camel:setHeader>
 			<camel:setHeader headerName="CamelHttpUri">
-				<camel:constant>{{osaddress.endpoint}}</camel:constant>
+				<camel:constant>{{props:osaddress.endpoint}}</camel:constant>
 			</camel:setHeader>
 
 			<camel:choice>
@@ -167,7 +191,7 @@
 				
 			</camel:choice>
 				
-			<camel:to uri="{{osaddress.endpoint}}" />
+			<camel:to uri="{{props:osaddress.endpoint}}" />
 			<camel:unmarshal id="UNMARSHALL_REMOTE_RESPONSE_OSPLACES" ref="OSPlacesPostcodeResponse" />
 			
 		</camel:route>
@@ -226,7 +250,16 @@
 	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-OSPlaces" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapterOSPlaces" />
 	<bean id="OnDemand-2011-03-Outbound-Postcode-Search-Adapter-Database" class="uk.gov.dwp.service.qas.ondemand_2011_03.PostcodeSearchOutboundAdapterDatabase" />
 	<bean id="OnDemand-2011-03-Inbound-Uprn-Search-Adapter" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchInboundAdapter" />
+
 	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-OSPlaces" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapterOSPlaces" />
-	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-Database" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapterDatabase" />
+	<bean id="OnDemand-2011-03-Outbound-Uprn-Search-Adapter-Database" class="uk.gov.dwp.service.qas.ondemand_2011_03.UprnSearchOutboundAdapterDatabase" />	
+	
+<!-- 	<bean id="activemq" 
+      class="org.apache.activemq.camel.component.ActiveMQComponent">
+      <property name="brokerURL" value="tcp://localhost:61616"/>
+              <property name="userName" value="user"/>
+        <property name="password" value="password"/>
+      
+   </bean> -->
 
 </beans>
