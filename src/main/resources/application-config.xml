@@ -27,9 +27,10 @@
 	<bean id="DatabasePostcodeBuilder" class="uk.gov.dwp.service.database.PostcodeBuilder" />
 	<bean id="DatabasePostcodeAdapter" class="uk.gov.dwp.service.database.Adapter" />
 	<bean id="DatabaseUprnBuilder" class="uk.gov.dwp.service.database.UprnBuilder" />
-	<bean id="ExceptionProcessor" class="uk.gov.dwp.service.osplaces.ExceptionProcessor" />
+	<bean id="ExceptionProcessor" class="uk.gov.dwp.service.ExceptionProcessor" />
 	<bean id="RESTExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.RESTExceptionResponseSetter" />
-	<bean id="QASExceptionResponseSetter" class="uk.gov.dwp.service.osplaces.QASExceptionResponseSetter" />
+	<bean id="DatabaseExceptionResponseSetter" class="uk.gov.dwp.service.database.DatabaseExceptionResponseSetter" />
+	<bean id="QASExceptionResponseSetter" class="uk.gov.dwp.service.qas.ondemand_2011_03.QASExceptionResponseSetter" />
 
 	<bean id="propsFunction" class="uk.gov.dwp.service.FallBackPropertiesPlaceHolder" />
 	
@@ -72,7 +73,7 @@
 		<camel:route id="REST_ROUTE_DATABASE">
 			<camel:from uri="cxfrs:bean:addressingRsServerDatabase" />
 			<camel:setProperty propertyName="EXCEPTION_RESPONSE_SETTER">
-				<camel:constant>RESTExceptionResponseSetter</camel:constant>
+				<camel:constant>DatabaseExceptionResponseSetter</camel:constant>
 			</camel:setProperty>
 
 			<camel:to uri="direct:call_database" />
@@ -207,11 +208,8 @@
 			<camel:choice>
 				<camel:when>
 					<camel:simple>${header.operationName} == 'getByPostcode'</camel:simple>
-					<camel:setHeader headerName="wildcardSymbol">
-						<camel:constant>%</camel:constant>
-					</camel:setHeader>
 					<camel:setHeader headerName="postcode">
-						<camel:method bean="DatabasePostcodeBuilder" method="buildPostcode(${body}, ${header.wildcardSymbol})"/>
+						<camel:method bean="DatabasePostcodeBuilder" method="buildPostcode(${body}, '%')"/>
 					</camel:setHeader>
 					<camel:log message="Executing query for postcode with parameter: '${header.postcode}'"/>
 					<camel:to uri="sql:SELECT * FROM addressbase WHERE (lower(replace(POSTCODE, ' ', ''))) LIKE :#postcode LIMIT 100"/>
