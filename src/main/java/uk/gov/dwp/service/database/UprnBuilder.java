@@ -1,18 +1,18 @@
 package uk.gov.dwp.service.database;
 
 public class UprnBuilder {
+	private static final String UPRN_VALID_CHARS_REGEX = "^([0-9]*)$";
+
 	/**
-	 * This method allow us to obtain a string structure from the
-	 * variety of different container types used by Camel which
-	 * are not visible to the developer.
-	 *
-	 * The string parameter is simply returned and can be used
-	 * in subsequent SQL calls.
-	 *
 	 * @param uprn
 	 *            the unique property reference number.
+	 * @throws InvalidUprnException if the unique property reference number is invalid.
 	 */
-	public String buildUprn(String uprn) {
+	public String buildUprn(String uprn) throws InvalidUprnException {
+		// Ensure the incoming data is valid
+		if (!uprn.matches(UPRN_VALID_CHARS_REGEX)) {
+			throw new InvalidUprnException("Supplied uprn has invalid format");
+		}
 		return uprn;
 	}
 }

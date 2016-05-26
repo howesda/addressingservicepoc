@@ -21,6 +21,7 @@
     <commons.version>3.4</commons.version>
   </properties>
   <build>
+    <finalName>addressingservicepoc</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

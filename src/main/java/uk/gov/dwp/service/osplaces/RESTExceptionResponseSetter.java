@@ -1,14 +1,13 @@
 package uk.gov.dwp.service.osplaces;
 
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.http.common.HttpOperationFailedException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import uk.gov.dwp.service.ErrorMessage;
+import uk.gov.dwp.service.ExceptionResponseSetter;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 
 public class RESTExceptionResponseSetter implements ExceptionResponseSetter {
