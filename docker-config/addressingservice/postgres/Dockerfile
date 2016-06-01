@@ -1,4 +1,0 @@
-FROM postgres:9.4.5
-
-expose 5432
-
