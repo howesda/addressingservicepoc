@@ -11,7 +11,7 @@
                            http://camel.apache.org/schema/spring
                            http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-	<context:property-placeholder location="classpath:datasource.properties" />
+	<context:property-placeholder />
 	<bean id="addressBaseDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver"/>
 		<property name="url" value="${datasource.url}"/>
@@ -34,7 +34,6 @@
 
 	<bean id="propsFunction" class="uk.gov.dwp.service.FallBackPropertiesPlaceHolder" />
 	
-
 	<camel:endpoint id="osplaces" uri="{{props:osaddress.endpoint}}" />
 
 

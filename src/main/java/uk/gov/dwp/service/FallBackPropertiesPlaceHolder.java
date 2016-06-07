@@ -21,6 +21,8 @@ public class FallBackPropertiesPlaceHolder implements PropertiesFunction {
 		System.out.println(" FallBackPropertiesPlaceHolder propsfilelocation = " + propsFileLocation);
 		System.out.println("**********************************************************");
 
+		
+		System.out.println(System.getenv("datasource.url"));
 		try {
 
 			InputStream is = null;
